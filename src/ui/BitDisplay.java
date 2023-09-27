@@ -5,11 +5,11 @@ import java.awt.FlowLayout;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class BitDisplayPanel extends JPanel {
+public class BitDisplay extends JPanel {
 
     private JTextField[] fields;
 
-    public BitDisplayPanel(char value) {
+    public BitDisplay(char value) {
         fields = new JTextField[16];
 
         for (int i = 0; i < 16; i++) {

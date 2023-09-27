@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-import ui.BitDisplayPanel;
+import ui.BitDisplay;
 
 import java.awt.*;
 
@@ -14,7 +14,7 @@ public class Main {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        BitDisplayPanel display1 = new BitDisplayPanel((char) 0);
+        BitDisplay display1 = new BitDisplay((char) 0);
 
         panel.add(display1);
 

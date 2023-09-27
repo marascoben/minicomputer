@@ -7,16 +7,18 @@ BINDIR = bin
 JARFILE = Simple.jar
 
 # Java source files
-SOURCES = src/ui/Int16Display.java \
+SOURCES = src/ui/BitDisplay.java \
 		  src/Main.java
-		
-# Generate corresponding class file paths
-CLASSES := $(patsubst src/%.java, $(BINDIR)/%.class, $(SOURCES))
 
-all: $(SOURCES)
+all: program
+	
+program:
 	$(JAVAC) -d bin $(SOURCES)
 	$(JAR) $(JARFLAGS) $(JARFILE) Main -C $(BINDIR) .
 
+run:
+	java -jar $(JARFILE)
+
 # Clean up the compiled class files and JAR output
-.PHONY: clean
-	rm -rf $(BINDIR) $(OUTPUT)
+clean:
+	rm -rf $(BINDIR) $(JARFILE)
