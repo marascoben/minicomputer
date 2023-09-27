@@ -2,35 +2,21 @@ JAVAC = javac
 JAR = jar
 JARFLAGS = cfe
 
-# Directory storing source java files
-SOURCE = src
-
-# Directory storing built class files
 BINDIR = bin
 
-# Output jarfile name
-JARFILE = Simple
+JARFILE = Simple.jar
 
-# Find all Java source files in the 'src' directory
-SOURCES := $(wildcard $(SOURCE)/*.java)
-
+# Java source files
+SOURCES = src/ui/Int16Display.java \
+		  src/Main.java
+		
 # Generate corresponding class file paths
-CLASSES := $(patsubst $(SOURCE)/%.java, $(BINDIR)/%.class, $(SOURCES))
+CLASSES := $(patsubst src/%.java, $(BINDIR)/%.class, $(SOURCES))
 
-# Compile the Java source files into class files
-$(BINDIR)/%.class: $(SOURCE)/%.java
-	@mkdir -p $(BINDIR)
-	$(JAVAC) -d $(BINDIR) $<
+all: $(SOURCES)
+	$(JAVAC) -d bin $(SOURCES)
+	$(JAR) $(JARFLAGS) $(JARFILE) Main -C $(BINDIR) .
 
-# Create the JAR file with the compiled classes
-$(JARFILE): $(CLASSES)
-	$(JAR) $(JARFLAGS) $(JARFILE).jar Main -C $(BINDIR) .
-
-.PHONY: run
-run:
-	java -jar $(JARFILE).jar
-
-# Clean the compiled files and JAR
+# Clean up the compiled class files and JAR output
 .PHONY: clean
-clean:
-	rm -rf $(BINDIR) $(JARFILE)
+	rm -rf $(BINDIR) $(OUTPUT)
