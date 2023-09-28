@@ -7,23 +7,32 @@ import javax.swing.JTextField;
 
 public class BitDisplay extends JPanel {
 
-    private JTextField[] fields;
+    private JTextField[] bitFields;
 
-    public BitDisplay(char value) {
-        fields = new JTextField[16];
+    public BitDisplay(int size) {
 
-        for (int i = 0; i < 16; i++) {
-            fields[i] = new JTextField(1);
-            fields[i].setEditable(false);
-            fields[i].setText("1");
+        bitFields = new JTextField[size];
+
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 5));
+
+        for (int i = 0; i < bitFields.length; i++) {
+            JTextField field = new JTextField(1);
+            field.setEditable(false);
+            field.setFocusable(false);
+            field.setHorizontalAlignment(JTextField.CENTER);
+            field.setText("0");
+
+            bitFields[i] = field;
+            add(field);
         }
+    }
 
-        JPanel panel = new JPanel(new FlowLayout());
-        for (int i = 0; i < 4; i++) {
-            panel.add(fields[i]);
+    public void setValue(char value) {
+        for (int i = 0; i < bitFields.length; i++) {
+            int mask = 1 << i;
+            int bit = (value & mask) >> i;
+            bitFields[(bitFields.length - 1) - i].setText(Integer.toString(bit));
         }
-
-        
     }
 
 }

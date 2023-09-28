@@ -1,6 +1,7 @@
 import javax.swing.*;
 
 import ui.BitDisplay;
+import ui.MainWindow;
 
 import java.awt.*;
 
@@ -9,12 +10,15 @@ public class Main {
 
         JFrame frame = new JFrame("Simple CISC");
 
+        JFrame window = new MainWindow();
+        
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        BitDisplay display1 = new BitDisplay((char) 0);
+        BitDisplay display1 = new BitDisplay(16);
+        display1.setValue((char) 4);
 
         panel.add(display1);
 

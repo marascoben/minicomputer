@@ -8,6 +8,7 @@ JARFILE = Simple.jar
 
 # Java source files
 SOURCES = src/ui/BitDisplay.java \
+		  src/ui/MainWindow.java \
 		  src/Main.java
 
 all: program
