@@ -3,7 +3,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "make && make run",
+            "command": "make all && make run",
             "group": {
                 "kind": "build",
                 "isDefault": true
