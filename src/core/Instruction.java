@@ -22,7 +22,7 @@ public enum Instruction {
      * @param word The word to read from.
      * @return The instruction stored in the first 6 bits of the word.
      */
-    public Instruction fromWord(char word) {
+    public static Instruction fromWord(char word) {
         byte opcode = (byte) (word >> 10);
         for (Instruction instruction : Instruction.values()) {
             if (instruction.opcode == opcode) {
