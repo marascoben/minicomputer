@@ -11,6 +11,9 @@ SOURCES = src/ui/BitDisplay.java \
 		  src/ui/MainWindow.java \
 		  src/components/Memory.java \
 		  src/components/Processor.java \
+		  src/core/Instruction.java \
+		  src/core/GeneralRegister.java \
+		  src/core/IndexRegister.java \
 		  src/Main.java
 
 all: program

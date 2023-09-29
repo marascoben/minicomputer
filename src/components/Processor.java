@@ -30,4 +30,28 @@ public class Processor {
         this.memory = memory;
     }
 
+    /**
+     * Resets the processor to its initial state.
+     */
+    public void reset() {
+        R0 = R1 = R2 = R3 = 0;
+        X1 = X2 = X3 = 0;
+        MAR = MBR = 0;
+        PC = 0;
+        IR = 0;
+        MFR = 0;
+        CC = 0;
+    }
+
+    public char getIR() {
+        return IR;
+    }
+
+    public byte getMFR() {
+        return MFR;
+    }
+
+    public byte getCC() {
+        return CC;
+    }
 }
