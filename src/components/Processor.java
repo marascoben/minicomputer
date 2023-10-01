@@ -1,5 +1,10 @@
 package components;
 
+import core.GeneralRegister;
+import core.IndexRegister;
+import core.Instruction;
+import util.WordUtils;
+
 public class Processor {
 
     // General Purpose Registers
@@ -30,17 +35,65 @@ public class Processor {
         this.memory = memory;
     }
 
+    public void execute(char word) {
+        switch (Instruction.fromWord(word)) {
+            case HLT:
+                halt();
+                break;
+            case LDR:
+                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case STR:
+                storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case LDA:
+                loadAddress(GeneralRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case LDX:
+                loadIndexFromMemory(IndexRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case STX:
+                storeIndexToMemory(IndexRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case TRP:
+                break;
+        }
+    }
+
     /**
-     * Resets the processor to its initial state.
+     * Given a 16-bit word, return the effective address from the word.
+     * 
+     * @param word The word to read from.
+     * @return The effective address from the word.
      */
-    public void reset() {
-        R0 = R1 = R2 = R3 = 0;
-        X1 = X2 = X3 = 0;
-        MAR = MBR = 0;
-        PC = 0;
-        IR = 0;
-        MFR = 0;
-        CC = 0;
+    public char effectiveAddress(char word) {
+        IndexRegister ix = IndexRegister.fromWord(word);
+
+        if (Instruction.isIndirectAddressing(word)) {
+            // Indirect addressing but NO indexing
+            switch (ix) {
+                case IX1:
+                    return memory.read((char) (X1 + WordUtils.getAddress(word)));
+                case IX2:
+                    return memory.read((char) (X2 + WordUtils.getAddress(word)));
+                case IX3:
+                    return memory.read((char) (X3 + WordUtils.getAddress(word)));
+                default:
+                    return memory.read(Instruction.getAddress(word));
+            }
+        } else {
+            // NO indirect addressing
+            switch (ix) {
+                case IX1:
+                    return (char) (X1 + WordUtils.getAddress(word));
+                case IX2:
+                    return (char) (X2 + WordUtils.getAddress(word));
+                case IX3:
+                    return (char) (X3 + WordUtils.getAddress(word));
+                default:
+                    return Instruction.getAddress(word);
+            }
+        }
     }
 
     public char getIR() {
@@ -53,5 +106,91 @@ public class Processor {
 
     public byte getCC() {
         return CC;
+    }
+
+    protected void halt() {
+    }
+
+    protected void loadFromMemory(GeneralRegister r, char address) {
+        switch (r) {
+            case GPR0:
+                R0 = memory.read(address);
+                break;
+            case GPR1:
+                R1 = memory.read(address);
+                break;
+            case GPR2:
+                R2 = memory.read(address);
+                break;
+            case GPR3:
+                R3 = memory.read(address);
+                break;
+        }
+    }
+
+    protected void storeToMemory(GeneralRegister r, char address) {
+        switch (r) {
+            case GPR0:
+                memory.write(address, R0);
+                break;
+            case GPR1:
+                memory.write(address, R1);
+                break;
+            case GPR2:
+                memory.write(address, R2);
+                break;
+            case GPR3:
+                memory.write(address, R3);
+                break;
+        }
+    }
+
+    protected void loadAddress(GeneralRegister r, char address) {
+        switch (r) {
+            case GPR0:
+                R0 = address;
+                break;
+            case GPR1:
+                R1 = address;
+                break;
+            case GPR2:
+                R2 = address;
+                break;
+            case GPR3:
+                R3 = address;
+                break;
+        }
+    }
+
+    protected void loadIndexFromMemory(IndexRegister ix, char address) {
+        switch (ix) {
+            case IX1:
+                X1 = memory.read(address);
+                break;
+            case IX2:
+                X2 = memory.read(address);
+                break;
+            case IX3:
+                X3 = memory.read(address);
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void storeIndexToMemory(IndexRegister ix, char address) {
+        switch (ix) {
+            case IX1:
+                memory.write(address, X1);
+                break;
+            case IX2:
+                memory.write(address, X2);
+                break;
+            case IX3:
+                memory.write(address, X3);
+                break;
+            default:
+                break;
+        }
     }
 }

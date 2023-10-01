@@ -15,7 +15,7 @@ public enum Instruction {
     private Instruction(byte opcode) {
         this.opcode = opcode;
     }
-    
+
     /**
      * Given a word, read the first 6 bits and return the corresponding instruction.
      * 
@@ -32,5 +32,31 @@ public enum Instruction {
 
         // If attempting to read an invalid instruction, halt the program
         return HLT;
+    }
+
+    /**
+     * Given a 16-bit word, return whether or not the indirect addressing bit is set
+     * in bit 10, where bit 0 is the most significant bit.
+     * 
+     * @param word The word to read from.
+     * @return Whether or not the indirect addressing bit is set.
+     */
+    public static boolean isIndirectAddressing(char word) {
+        // Left shift by 10 bits to get rid of the opcode, index register, and GPR, then
+        // right shift by 15 bits to get rid of the last 15 bits
+        return ((word << 10) >> 15) == 1;
+    }
+
+    /**
+     * Given a 16-bit word, return the data stored in bits 11-15, where bit 0 is the
+     * most significant bit.
+     * 
+     * @param word The word to read from.
+     * @return The data stored in bits 11-15.
+     */
+    public static char getAddress(char word) {
+        // Left shift by 11 bits to remove the opcode, GPR, IXR, and indirect addressing
+        // bit, then right shift by 11 bits to get rid of the last 11 bits.
+        return (char) ((word << 11) >> 11);
     }
 }

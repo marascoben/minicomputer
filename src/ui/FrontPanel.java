@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import components.Computer;
+
 public class FrontPanel extends JFrame {
 
     // General Purpose Register Panels (16-bit)
@@ -33,8 +35,13 @@ public class FrontPanel extends JFrame {
     // Condition code panel (4-bit)
     private IndicatorPanel ccPanel;
 
-    public FrontPanel() {
+    // Computer object
+    private Computer computer;
+
+    public FrontPanel(Computer computer) {
         super("Minicomputer");
+
+        this.computer = computer;
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(8,2, 10, 10));

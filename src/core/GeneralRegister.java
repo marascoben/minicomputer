@@ -11,4 +11,23 @@ public enum GeneralRegister {
     private GeneralRegister(byte id) {
         this.id = id;
     }
+
+    /**
+     * Given a 16-bit word, return the general purpose register selected by bits
+     * 8-9, where bit 0 is the most significant bit.
+     * 
+     * @param word The word to read from.
+     * @return The register selected by bits 8-9.
+     */
+    public static GeneralRegister fromWord(char word) {
+        byte id = (byte) ((word << 6) >> 14);
+        for (GeneralRegister register : GeneralRegister.values()) {
+            if (register.id == id) {
+                return register;
+            }
+        }
+
+        return GPR0;
+    }
+
 }
