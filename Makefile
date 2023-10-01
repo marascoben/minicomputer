@@ -7,8 +7,8 @@ BINDIR = bin
 JARFILE = Simple.jar
 
 # Java source files
-SOURCES = src/ui/BitDisplay.java \
-		  src/ui/MainWindow.java \
+SOURCES = src/ui/Indicator.java \
+		  src/ui/FrontPanel.java \
 		  src/components/Memory.java \
 		  src/components/Processor.java \
 		  src/core/Instruction.java \
