@@ -7,6 +7,10 @@ import javax.swing.JComponent;
 
 public class Indicator extends JComponent {
 
+    public static Color ON = new Color(191, 107, 39, 255);
+
+    public static Color OFF = new Color(237, 189, 150, 255);
+
     public static final int SIZE = 16;
 
     private boolean state = false;
@@ -20,9 +24,9 @@ public class Indicator extends JComponent {
         super.paintComponent(g);
 
         if (state) {
-            g.setColor(Color.GREEN);
+            g.setColor(OFF);
         } else {
-            g.setColor(Color.RED);
+            g.setColor(ON);
         }
 
         g.fillRect(0, 0, SIZE, SIZE);
