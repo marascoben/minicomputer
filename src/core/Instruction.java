@@ -46,17 +46,4 @@ public enum Instruction {
         // right shift by 15 bits to get rid of the last 15 bits
         return ((word << 10) >> 15) == 1;
     }
-
-    /**
-     * Given a 16-bit word, return the data stored in bits 11-15, where bit 0 is the
-     * most significant bit.
-     * 
-     * @param word The word to read from.
-     * @return The data stored in bits 11-15.
-     */
-    public static char getAddress(char word) {
-        // Left shift by 11 bits to remove the opcode, GPR, IXR, and indirect addressing
-        // bit, then right shift by 11 bits to get rid of the last 11 bits.
-        return (char) ((word << 11) >> 11);
-    }
 }

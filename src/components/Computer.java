@@ -35,23 +35,25 @@ public class Computer {
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
 
-            String line;
+            LOGGER.info("Loading ROM file " + file.getName());
 
+            String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" ");
 
                 char address = (char) Integer.parseInt(parts[0], 16);
                 char data = (char) Integer.parseInt(parts[1], 16);
 
-                System.out.println("Loading " + String.format("0x%08X", (short) address) + " with "
+                LOGGER.info("Loading memory location" + String.format("0x%08X", (short) address) + " with value "
                         + String.format("0x%08X", (short) data));
 
                 memory.privilegedWrite(address, data);
             }
 
+            br.close();
+
         } catch (IOException e) {
-            // TODO: Logging and better overhead exception handling
-            e.printStackTrace();
+            LOGGER.warning("Failed to load ROM file " + file.getName() + ": " + e.getMessage());
         }
     }
 

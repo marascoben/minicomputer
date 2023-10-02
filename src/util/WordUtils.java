@@ -1,7 +1,5 @@
 package util;
 
-import core.IndexRegister;
-
 public class WordUtils {
 
     /**

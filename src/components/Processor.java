@@ -1,9 +1,6 @@
 package components;
 
-import java.util.List;
 import java.util.logging.Logger;
-import java.util.ArrayList;
-
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
@@ -44,15 +41,12 @@ public class Processor {
     public void execute(char word) {
         logInstruction(word);
 
-        GeneralRegister r = GeneralRegister.fromWord(word);
-        LOG.info(r.name());
-
         switch (Instruction.fromWord(word)) {
             case HLT:
                 halt();
                 break;
             case LDR:
-                loadFromMemory(r, effectiveAddress(word));
+                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
                 break;
             case STR:
                 storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
@@ -80,11 +74,9 @@ public class Processor {
     public char effectiveAddress(char word) {
         IndexRegister ix = IndexRegister.fromWord(word);
 
-        byte address = WordUtils.getAddress(word);
-
         if (Instruction.isIndirectAddressing(word)) {
             // Indirect addressing but NO indexing
-            LOG.info("Computing effective address with indirect addressing");
+            LOG.fine("Computing effective address with indirect addressing");
             switch (ix) {
                 case IX1:
                     return memory.read((char) (X1 + WordUtils.getAddress(word)));
@@ -97,7 +89,7 @@ public class Processor {
             }
         } else {
             // NO indirect addressing
-            LOG.info("Computing effective address without indirect addressing for address " + String.format("%5s", Integer.toBinaryString(address)).replace(' ', '0'));
+            LOG.fine("Computing effective address without indirect addressing");
             switch (ix) {
                 case IX1:
                     return (char) (X1 + WordUtils.getAddress(word));
@@ -124,8 +116,15 @@ public class Processor {
     }
 
     protected void halt() {
+        LOG.info("Halting minicomputer");
     }
 
+    /**
+     * Load the contents of the address into the specified general purpose register.
+     * 
+     * @param r       The register to load the value into.
+     * @param address The address to load the value from.
+     */
     protected void loadFromMemory(GeneralRegister r, char address) {
         LOG.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
 
@@ -145,7 +144,16 @@ public class Processor {
         }
     }
 
+    /**
+     * Store the contents of the specified general purpose register into the
+     * address.
+     * 
+     * @param r       The register to store the value from.
+     * @param address The address to store the value to.
+     */
     protected void storeToMemory(GeneralRegister r, char address) {
+        LOG.info("Storing value from register " + r + " to address " + String.format("0x%08X", (short) address));
+
         switch (r) {
             case GPR0:
                 memory.write(address, R0);
@@ -162,7 +170,15 @@ public class Processor {
         }
     }
 
+    /**
+     * Load the address into the specified general purpose register.
+     * 
+     * @param r       The register to load the value into.
+     * @param address The address to load the value from.
+     */
     protected void loadAddress(GeneralRegister r, char address) {
+        LOG.info("Loading address " + String.format("0x%08X", (short) address) + " to register " + r);
+
         switch (r) {
             case GPR0:
                 R0 = address;
@@ -179,7 +195,15 @@ public class Processor {
         }
     }
 
+    /**
+     * Load the contents of the address into the specified index register.
+     * 
+     * @param ix      The index register to load the value into.
+     * @param address The address to load the value from.
+     */
     protected void loadIndexFromMemory(IndexRegister ix, char address) {
+        LOG.info("Loading to index register " + ix + " from address " + String.format("0x%08X", (short) address));
+
         switch (ix) {
             case IX1:
                 X1 = memory.read(address);
@@ -195,7 +219,15 @@ public class Processor {
         }
     }
 
+    /**
+     * Store the contents of the specified index register into the address.
+     * 
+     * @param ix      The index register to store the value from.
+     * @param address The address to store the value to.
+     */
     protected void storeIndexToMemory(IndexRegister ix, char address) {
+        LOG.info("Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
+
         switch (ix) {
             case IX1:
                 memory.write(address, X1);
@@ -211,11 +243,12 @@ public class Processor {
         }
     }
 
-    private void logInstruction(char word){
+    private void logInstruction(char word) {
         GeneralRegister r = GeneralRegister.fromWord(word);
         IndexRegister ix = IndexRegister.fromWord(word);
         char address = effectiveAddress(word);
 
-        LOG.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " " + String.format("0x%08X", (short) address));
+        LOG.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " "
+                + String.format("0x%08X", (short) address));
     }
 }

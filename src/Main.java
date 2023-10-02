@@ -1,36 +1,29 @@
 import java.io.File;
-import java.util.Date;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
-import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
+import java.util.logging.Logger;
 
 import components.Computer;
 import ui.FrontPanel;
+import util.LogFormat;
 
 public class Main {
 
     public static String IPL_FILE = "IPL.txt";
 
-    public static String LOG_FILE = "output.log";
+    public static String LOG_FILE = "output%g.log";
+
+    public static Logger LOGGER = Logger.getLogger("");
 
     public static void main(String[] args) {
 
         // Setup Logging
         try {
 
+            LOGGER.setUseParentHandlers(false);
             FileHandler fh = new FileHandler(LOG_FILE, true);
-            fh.setFormatter(new SimpleFormatter() {
-                private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
-
-                @Override
-                public synchronized String format(LogRecord lr) {
-                    return String.format(format,
-                            new Date(lr.getMillis()),
-                            lr.getLevel().getLocalizedName(),
-                            lr.getMessage());
-                }
-            });
-            java.util.logging.Logger.getLogger("").addHandler(fh);
+            fh.setFormatter(new LogFormat());
+            LOGGER.addHandler(fh);
 
         } catch (Exception e) {
             // TODO: handle exception
