@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import components.Computer;
 
@@ -44,7 +46,7 @@ public class FrontPanel extends JFrame {
         this.computer = computer;
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(8,2, 10, 10));
+        panel.setLayout(new GridLayout(8, 2, 10, 10));
 
         // General Purpose Register Panels (16-bit)
         r0Panel = new IndicatorPanel("R0");
@@ -75,6 +77,29 @@ public class FrontPanel extends JFrame {
         // Condition code panel (4-bit)
         ccPanel = new IndicatorPanel("Condition Code", 4);
 
+        // Simple input panel for the user to enter a binary word and a run button to
+        // execute the word
+        JPanel bottom = new JPanel();
+        JTextField input = new JTextField(16);
+        JButton run = new JButton("Run");
+        run.addActionListener(e -> {
+            try {
+                char word = (char) Integer.parseInt(input.getText(), 2);
+                // Print the binary string with leading zeros
+                System.out.println("Running " + String.format("%16s", Integer.toBinaryString(word)).replace(' ', '0'));
+                computer.runInstruction(word);
+                updateIndicators();
+                System.out.println("r3: " + String.format("%16s", Integer.toBinaryString((short)computer.processor.R3)).replace(' ', '0'));
+                // computer.execute(word);
+            } catch (NumberFormatException ex) {
+                System.out.println("Invalid input");
+            }
+        });
+
+        bottom.add(input);
+        bottom.add(run);
+        add(bottom, BorderLayout.SOUTH);
+
         add(panel, BorderLayout.CENTER);
 
         panel.add(r0Panel);
@@ -95,5 +120,21 @@ public class FrontPanel extends JFrame {
         setBackground(Color.WHITE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+    }
+
+    public void updateIndicators() {
+        r0Panel.setValue(computer.processor.R0);
+        r1Panel.setValue(computer.processor.R1);
+        r2Panel.setValue(computer.processor.R2);
+        r3Panel.setValue(computer.processor.R3);
+        x1Panel.setValue(computer.processor.X1);
+        x2Panel.setValue(computer.processor.X2);
+        x3Panel.setValue(computer.processor.X3);
+        mbrPanel.setValue(computer.processor.MBR);
+        marPanel.setValue(computer.processor.MAR);
+        pcPanel.setValue(computer.processor.PC);
+        irPanel.setValue(computer.processor.getIR());
+        mfrPanel.setValue(computer.processor.getMFR());
+        ccPanel.setValue(computer.processor.getCC());
     }
 }

@@ -20,7 +20,7 @@ public enum GeneralRegister {
      * @return The register selected by bits 8-9.
      */
     public static GeneralRegister fromWord(char word) {
-        byte id = (byte) ((word << 6) >> 14);
+        byte id = (byte) ((word >> 8) & 0b11);
         for (GeneralRegister register : GeneralRegister.values()) {
             if (register.id == id) {
                 return register;

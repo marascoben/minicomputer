@@ -1,11 +1,17 @@
 package components;
 
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.ArrayList;
+
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
 import util.WordUtils;
 
 public class Processor {
+
+    private static final Logger LOG = Logger.getLogger(Processor.class.getName());
 
     // General Purpose Registers
     public char R0 = 0, R1 = 0, R2 = 0, R3 = 0;
@@ -36,12 +42,17 @@ public class Processor {
     }
 
     public void execute(char word) {
+        logInstruction(word);
+
+        GeneralRegister r = GeneralRegister.fromWord(word);
+        LOG.info(r.name());
+
         switch (Instruction.fromWord(word)) {
             case HLT:
                 halt();
                 break;
             case LDR:
-                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                loadFromMemory(r, effectiveAddress(word));
                 break;
             case STR:
                 storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
@@ -69,8 +80,11 @@ public class Processor {
     public char effectiveAddress(char word) {
         IndexRegister ix = IndexRegister.fromWord(word);
 
+        byte address = WordUtils.getAddress(word);
+
         if (Instruction.isIndirectAddressing(word)) {
             // Indirect addressing but NO indexing
+            LOG.info("Computing effective address with indirect addressing");
             switch (ix) {
                 case IX1:
                     return memory.read((char) (X1 + WordUtils.getAddress(word)));
@@ -79,10 +93,11 @@ public class Processor {
                 case IX3:
                     return memory.read((char) (X3 + WordUtils.getAddress(word)));
                 default:
-                    return memory.read(Instruction.getAddress(word));
+                    return memory.read((char) WordUtils.getAddress(word));
             }
         } else {
             // NO indirect addressing
+            LOG.info("Computing effective address without indirect addressing for address " + String.format("%5s", Integer.toBinaryString(address)).replace(' ', '0'));
             switch (ix) {
                 case IX1:
                     return (char) (X1 + WordUtils.getAddress(word));
@@ -91,7 +106,7 @@ public class Processor {
                 case IX3:
                     return (char) (X3 + WordUtils.getAddress(word));
                 default:
-                    return Instruction.getAddress(word);
+                    return (char) WordUtils.getAddress(word);
             }
         }
     }
@@ -100,18 +115,20 @@ public class Processor {
         return IR;
     }
 
-    public byte getMFR() {
-        return MFR;
+    public char getMFR() {
+        return (char) MFR;
     }
 
-    public byte getCC() {
-        return CC;
+    public char getCC() {
+        return (char) CC;
     }
 
     protected void halt() {
     }
 
     protected void loadFromMemory(GeneralRegister r, char address) {
+        LOG.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
+
         switch (r) {
             case GPR0:
                 R0 = memory.read(address);
@@ -192,5 +209,13 @@ public class Processor {
             default:
                 break;
         }
+    }
+
+    private void logInstruction(char word){
+        GeneralRegister r = GeneralRegister.fromWord(word);
+        IndexRegister ix = IndexRegister.fromWord(word);
+        char address = effectiveAddress(word);
+
+        LOG.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " " + String.format("0x%08X", (short) address));
     }
 }

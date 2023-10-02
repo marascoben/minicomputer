@@ -5,19 +5,6 @@ import core.IndexRegister;
 public class WordUtils {
 
     /**
-     * Given a 16-bit word, return the data stored in bits 6-7, where bit 0 is the
-     * most significant bit.
-     * 
-     * @param word The word to read from.
-     * @return The data stored in bits 6-7.
-     */
-    public static byte getGPR(char word) {
-        // Left shift by 6 bits to get rid of the opcode, then right shift by 14 bits to
-        // get rid of the last 14 bits
-        return (byte) ((word << 6) >> 14);
-    }
-
-    /**
      * Given a 16-bit word, return the data stored in bits 8-9, where bit 0 is the
      * most significant bit.
      * 
@@ -45,16 +32,15 @@ public class WordUtils {
     }
 
     /**
-     * Given a 16-bit word, return the data stored in bits 11-15, where bit 0 is the
-     * most significant bit.
+     * Given a 16-bit word, return the data stored in bits 0-4, where bit 0 is the least significant bit.
      * 
      * @param word The word to read from.
      * @return The data stored in bits 11-15.
      */
     public static byte getAddress(char word) {
-        // Left shift by 11 bits to remove the opcode, GPR, IXR, and indirect addressing
-        // bit, then right shift by 11 bits to get rid of the last 11 bits.
-        return (byte) ((word << 11) >> 11);
+        
+        // Right shift by 11 bits to get rid of the opcode, index register, and GPR
+        return (byte) (word & 0b0000000000011111);
     }
 
 }
