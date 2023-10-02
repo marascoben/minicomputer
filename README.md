@@ -4,6 +4,8 @@ A simple Complex Instruction Set Computer (CISC) simulator developed for the CSC
 
 ## Build and Run
 
+This simulator has been built using version `65` of the Java Runtime, and may not work with older versions.
+
 To build the simulator, run:
 
 ```bash
