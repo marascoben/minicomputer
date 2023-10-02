@@ -15,7 +15,7 @@ public class IndicatorPanel extends JPanel {
     private JPanel labelPanel;
 
     // The LD button for the indicator panel (if enabled)
-    private JButton loadButton;
+    public JButton loadButton;
 
     // The panel that contains the indicator groups
     private JPanel indicatorPanel;

@@ -37,6 +37,8 @@ public class FrontPanel extends JFrame {
     // Condition code panel (4-bit)
     private IndicatorPanel ccPanel;
 
+    JTextField input;
+    
     // Computer object
     private Computer computer;
 
@@ -45,28 +47,80 @@ public class FrontPanel extends JFrame {
 
         this.computer = computer;
 
+        input = new JTextField(16);
+
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(8, 2, 10, 10));
 
         // General Purpose Register Panels (16-bit)
         r0Panel = new IndicatorPanel("R0", true);
+        r0Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading R0");
+            computer.processor.R0 = parseInput();
+            updateIndicators();
+        });
         r1Panel = new IndicatorPanel("R1", true);
+        r1Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading R1");
+            computer.processor.R1 = parseInput();
+            updateIndicators();
+        });
         r2Panel = new IndicatorPanel("R2", true);
+        r2Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading R2");
+            computer.processor.R2 = parseInput();
+            updateIndicators();
+        });
         r3Panel = new IndicatorPanel("R3", true);
+        r3Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading R3");
+            computer.processor.R3 = parseInput();
+            updateIndicators();
+        });
 
         // Index Register Panels (16-bit)
         x1Panel = new IndicatorPanel("X1", true);
+        x1Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading X1");
+            computer.processor.X1 = parseInput();
+            updateIndicators();
+        });
         x2Panel = new IndicatorPanel("X2", true);
+        x2Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading X2");
+            computer.processor.X2 = parseInput();
+            updateIndicators();
+        });
         x3Panel = new IndicatorPanel("X3", true);
+        x3Panel.loadButton.addActionListener(e -> {
+            System.out.println("Loading X3");
+            computer.processor.X3 = parseInput();
+            updateIndicators();
+        });
 
         // Memory Buffer Register Panel (16-bit)
         mbrPanel = new IndicatorPanel("Memory Buffer", true);
+        mbrPanel.loadButton.addActionListener(e -> {
+            System.out.println("Loading MBR");
+            computer.processor.MBR = parseInput();
+            updateIndicators();
+        });
 
         // Memory Address Register Panel (12-bit)
         marPanel = new IndicatorPanel("Memory Address", true, 12);
+        marPanel.loadButton.addActionListener(e -> {
+            System.out.println("Loading MAR");
+            computer.processor.MAR = parseInput();
+            updateIndicators();
+        });
 
         // Program counter panel (12-bit)
         pcPanel = new IndicatorPanel("Program Counter", true, 12);
+        pcPanel.loadButton.addActionListener(e -> {
+            System.out.println("Loading PC");
+            computer.processor.PC = parseInput();
+            updateIndicators();
+        });
 
         // Instruction register panel (16-bit)
         irPanel = new IndicatorPanel("Instruction", false);
@@ -80,7 +134,7 @@ public class FrontPanel extends JFrame {
         // Simple input panel for the user to enter a binary word and a run button to
         // execute the word
         JPanel bottom = new JPanel();
-        JTextField input = new JTextField(16);
+        
         JButton run = new JButton("Run");
         run.addActionListener(e -> {
             try {
@@ -139,5 +193,9 @@ public class FrontPanel extends JFrame {
         irPanel.setValue(computer.processor.getIR());
         mfrPanel.setValue(computer.processor.getMFR());
         ccPanel.setValue(computer.processor.getCC());
+    }
+
+    public char parseInput(){
+        return (char) Integer.parseInt(input.getText(), 2);
     }
 }
