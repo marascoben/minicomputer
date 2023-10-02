@@ -28,7 +28,8 @@ public class Memory {
             throw new IllegalArgumentException("Invalid memory address");
         }
 
-         // TODO: Implement better exceptions so that the processor can set the correct fault.
+        // TODO: Implement better exceptions so that the processor can set the correct
+        // fault.
 
         return region.getOrDefault(address, (char) 0);
     }
@@ -49,7 +50,8 @@ public class Memory {
             throw new IllegalArgumentException("Cannot write to reserved memory");
         }
 
-        // TODO: Implement better exceptions so that the processor can set the correct fault.
+        // TODO: Implement better exceptions so that the processor can set the correct
+        // fault.
 
         region.put(address, data);
     }
@@ -66,7 +68,8 @@ public class Memory {
             throw new IllegalArgumentException("Invalid memory address");
         }
 
-        // TODO: Implement better exceptions so that the processor can set the correct fault.
+        // TODO: Implement better exceptions so that the processor can set the correct
+        // fault.
 
         region.put(address, data);
     }
