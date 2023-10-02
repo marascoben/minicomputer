@@ -14,11 +14,34 @@ public class Computer {
 
     public Memory memory;
 
+    public File rom;
+
     public Computer() {
         memory = new Memory();
         processor = new Processor(memory);
 
         LOGGER.info("Minicomputer started");
+    }
+
+    public Computer(File rom) {
+        memory = new Memory();
+        processor = new Processor(memory);
+        this.rom = rom;
+
+        loadROM(rom);
+
+        LOGGER.info("Minicomputer started after loading ROM file");
+    }
+
+    public void reset() {
+        memory = new Memory();
+        processor = new Processor(memory);
+
+        if (rom != null) {
+            loadROM(rom);
+        }
+
+        LOGGER.info("Minicomputer reset");
     }
 
     public void runInstruction(char word) {
@@ -32,6 +55,10 @@ public class Computer {
      * @param file The ROM file to load.
      */
     public void loadROM(File file) {
+        if (rom == null) {
+            rom = file;
+        }
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
 

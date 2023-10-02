@@ -49,33 +49,33 @@ public class FrontPanel extends JFrame {
         panel.setLayout(new GridLayout(8, 2, 10, 10));
 
         // General Purpose Register Panels (16-bit)
-        r0Panel = new IndicatorPanel("R0");
-        r1Panel = new IndicatorPanel("R1");
-        r2Panel = new IndicatorPanel("R2");
-        r3Panel = new IndicatorPanel("R3");
+        r0Panel = new IndicatorPanel("R0", true);
+        r1Panel = new IndicatorPanel("R1", true);
+        r2Panel = new IndicatorPanel("R2", true);
+        r3Panel = new IndicatorPanel("R3", true);
 
         // Index Register Panels (16-bit)
-        x1Panel = new IndicatorPanel("X1");
-        x2Panel = new IndicatorPanel("X2");
-        x3Panel = new IndicatorPanel("X3");
+        x1Panel = new IndicatorPanel("X1", true);
+        x2Panel = new IndicatorPanel("X2", true);
+        x3Panel = new IndicatorPanel("X3", true);
 
         // Memory Buffer Register Panel (16-bit)
-        mbrPanel = new IndicatorPanel("Memory Buffer");
+        mbrPanel = new IndicatorPanel("Memory Buffer", true);
 
         // Memory Address Register Panel (12-bit)
-        marPanel = new IndicatorPanel("Memory Address", 12);
+        marPanel = new IndicatorPanel("Memory Address", true, 12);
 
         // Program counter panel (12-bit)
-        pcPanel = new IndicatorPanel("Program Counter", 12);
+        pcPanel = new IndicatorPanel("Program Counter", true, 12);
 
         // Instruction register panel (16-bit)
-        irPanel = new IndicatorPanel("Instruction");
+        irPanel = new IndicatorPanel("Instruction", false);
 
         // Memory fault register panel (4-bit)
-        mfrPanel = new IndicatorPanel("Memory Fault", 4);
+        mfrPanel = new IndicatorPanel("Memory Fault", false, 4);
 
         // Condition code panel (4-bit)
-        ccPanel = new IndicatorPanel("Condition Code", 4);
+        ccPanel = new IndicatorPanel("Condition Code", false, 4);
 
         // Simple input panel for the user to enter a binary word and a run button to
         // execute the word
@@ -85,19 +85,22 @@ public class FrontPanel extends JFrame {
         run.addActionListener(e -> {
             try {
                 char word = (char) Integer.parseInt(input.getText(), 2);
-                // Print the binary string with leading zeros
-                System.out.println("Running " + String.format("%16s", Integer.toBinaryString(word)).replace(' ', '0'));
                 computer.runInstruction(word);
                 updateIndicators();
-                System.out.println("r3: " + String.format("%16s", Integer.toBinaryString((short)computer.processor.R3)).replace(' ', '0'));
-                // computer.execute(word);
             } catch (NumberFormatException ex) {
                 System.out.println("Invalid input");
             }
         });
 
+        JButton init = new JButton("Init");
+        init.addActionListener(e -> {
+            computer.reset();
+            updateIndicators();
+        });
+
         bottom.add(input);
         bottom.add(run);
+        bottom.add(init);
         add(bottom, BorderLayout.SOUTH);
 
         add(panel, BorderLayout.CENTER);

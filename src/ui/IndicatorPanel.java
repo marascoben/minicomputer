@@ -3,6 +3,7 @@ package ui;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -12,6 +13,9 @@ public class IndicatorPanel extends JPanel {
 
     // Text label for the indicator panel
     private JPanel labelPanel;
+
+    // The LD button for the indicator panel (if enabled)
+    private JButton loadButton;
 
     // The panel that contains the indicator groups
     private JPanel indicatorPanel;
@@ -23,11 +27,11 @@ public class IndicatorPanel extends JPanel {
      * 
      * @param label The label text for the indicator panel.
      */
-    public IndicatorPanel(String label) {
-        this(label, 16);
+    public IndicatorPanel(String label, boolean loadable) {
+        this(label, loadable, 16);
     }
 
-    public IndicatorPanel(String label, int lights) {
+    public IndicatorPanel(String label, boolean loadable, int lights) {
         super();
         setLayout(new GridLayout(2, 1));
 
@@ -41,6 +45,11 @@ public class IndicatorPanel extends JPanel {
         for (int i = 0; i < groups.length; i++) {
             groups[i] = new IndicatorGroup();
             indicatorPanel.add(groups[i]);
+        }
+
+        if(loadable){
+            loadButton = new JButton("LD");
+            labelPanel.add(loadButton);
         }
 
         add(labelPanel);
