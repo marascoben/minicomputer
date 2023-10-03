@@ -8,7 +8,7 @@ import util.WordUtils;
 
 public class Processor {
 
-    private static final Logger LOG = Logger.getLogger(Processor.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Processor.class.getName());
 
     // General Purpose Registers
     public char R0 = 0, R1 = 0, R2 = 0, R3 = 0;
@@ -76,7 +76,7 @@ public class Processor {
 
         if (Instruction.isIndirectAddressing(word)) {
             // Indirect addressing but NO indexing
-            LOG.fine("Computing effective address with indirect addressing");
+            LOGGER.fine("Computing effective address with indirect addressing");
             switch (ix) {
                 case IX1:
                     return memory.read((char) (X1 + WordUtils.getAddress(word)));
@@ -89,7 +89,7 @@ public class Processor {
             }
         } else {
             // NO indirect addressing
-            LOG.fine("Computing effective address without indirect addressing");
+            LOGGER.fine("Computing effective address without indirect addressing");
             switch (ix) {
                 case IX1:
                     return (char) (X1 + WordUtils.getAddress(word));
@@ -116,7 +116,7 @@ public class Processor {
     }
 
     protected void halt() {
-        LOG.info("Halting minicomputer");
+        LOGGER.info("Halting minicomputer");
     }
 
     /**
@@ -126,7 +126,7 @@ public class Processor {
      * @param address The address to load the value from.
      */
     protected void loadFromMemory(GeneralRegister r, char address) {
-        LOG.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
+        LOGGER.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
 
         switch (r) {
             case GPR0:
@@ -152,7 +152,7 @@ public class Processor {
      * @param address The address to store the value to.
      */
     protected void storeToMemory(GeneralRegister r, char address) {
-        LOG.info("Storing value from register " + r + " to address " + String.format("0x%08X", (short) address));
+        LOGGER.info("Storing value from register " + r + " to address " + String.format("0x%08X", (short) address));
 
         switch (r) {
             case GPR0:
@@ -177,7 +177,7 @@ public class Processor {
      * @param address The address to load the value from.
      */
     protected void loadAddress(GeneralRegister r, char address) {
-        LOG.info("Loading address " + String.format("0x%08X", (short) address) + " to register " + r);
+        LOGGER.info("Loading address " + String.format("0x%08X", (short) address) + " to register " + r);
 
         switch (r) {
             case GPR0:
@@ -202,7 +202,7 @@ public class Processor {
      * @param address The address to load the value from.
      */
     protected void loadIndexFromMemory(IndexRegister ix, char address) {
-        LOG.info("Loading to index register " + ix + " from address " + String.format("0x%08X", (short) address));
+        LOGGER.info("Loading to index register " + ix + " from address " + String.format("0x%08X", (short) address));
 
         switch (ix) {
             case IX1:
@@ -226,7 +226,7 @@ public class Processor {
      * @param address The address to store the value to.
      */
     protected void storeIndexToMemory(IndexRegister ix, char address) {
-        LOG.info("Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
+        LOGGER.info("Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
 
         switch (ix) {
             case IX1:
@@ -248,7 +248,7 @@ public class Processor {
         IndexRegister ix = IndexRegister.fromWord(word);
         char address = effectiveAddress(word);
 
-        LOG.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " "
+        LOGGER.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " "
                 + String.format("0x%08X", (short) address));
     }
 }

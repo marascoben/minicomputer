@@ -1,8 +1,11 @@
 package components;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Memory {
+
+    private static final Logger LOGGER = Logger.getLogger(Memory.class.getName());
 
     // The available memory size
     public static final int MEMORY_SIZE = 2048;
@@ -25,6 +28,9 @@ public class Memory {
      */
     public char read(char address) {
         if (address < 0 || address >= MEMORY_SIZE) {
+            LOGGER.warning("An invalid or reserved memory address access was rejected "
+                    + String.format("0x%08X", (short) address));
+
             throw new IllegalArgumentException("Invalid memory address");
         }
 
@@ -43,10 +49,14 @@ public class Memory {
      */
     public void write(char address, char data) {
         if (address < RESERVED_SIZE) {
+            LOGGER.warning("Failed to write to address " + String.format("0x%08X", (short) address)
+                    + " as the address is in the reserved memory region");
             throw new IllegalArgumentException("Cannot write to reserved memory");
         }
 
-        if (address > -MEMORY_SIZE) {
+        if (address >= MEMORY_SIZE) {
+            LOGGER.warning("Failed to write to address " + String.format("0x%08X", (short) address)
+                    + " as the address exceeds the memory size");
             throw new IllegalArgumentException("Cannot write to reserved memory");
         }
 
@@ -65,6 +75,8 @@ public class Memory {
      */
     public void privilegedWrite(char address, char data) {
         if (address < 0 || address >= MEMORY_SIZE) {
+            LOGGER.warning("Failed to write to address " + String.format("0x%08X", (short) address)
+                    + " as the address is not within the valid memory range");
             throw new IllegalArgumentException("Invalid memory address");
         }
 

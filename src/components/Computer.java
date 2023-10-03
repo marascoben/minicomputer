@@ -10,10 +10,13 @@ public class Computer {
 
     private static final Logger LOGGER = Logger.getLogger(Computer.class.getName());
 
+    // The processor object of the minicomputer
     public Processor processor;
 
+    // The memory object of the minicomputer
     public Memory memory;
 
+    // The ROM file to load into memory
     public File rom;
 
     public Computer() {
@@ -21,16 +24,6 @@ public class Computer {
         processor = new Processor(memory);
 
         LOGGER.info("Minicomputer started");
-    }
-
-    public Computer(File rom) {
-        memory = new Memory();
-        processor = new Processor(memory);
-        this.rom = rom;
-
-        loadROM(rom);
-
-        LOGGER.info("Minicomputer started after loading ROM file");
     }
 
     public void reset() {
@@ -41,7 +34,7 @@ public class Computer {
             loadROM(rom);
         }
 
-        LOGGER.info("Minicomputer reset");
+        LOGGER.info("Resetting minicomputer");
     }
 
     public void runInstruction(char word) {
@@ -71,13 +64,14 @@ public class Computer {
                 char address = (char) Integer.parseInt(parts[0], 16);
                 char data = (char) Integer.parseInt(parts[1], 16);
 
-                LOGGER.info("Loading memory location" + String.format("0x%08X", (short) address) + " with value "
-                        + String.format("0x%08X", (short) data));
+                LOGGER.info("\u2523 Writing " + String.format("0x%08X", (short) data) + " to memory location "
+                        + String.format("0x%08X", (short) address));
 
                 memory.privilegedWrite(address, data);
             }
 
             br.close();
+            LOGGER.info("\u2517 ROM file " + file.getName() + " finished loading");
 
         } catch (IOException e) {
             LOGGER.warning("Failed to load ROM file " + file.getName() + ": " + e.getMessage());
