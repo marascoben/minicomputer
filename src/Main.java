@@ -1,7 +1,6 @@
 import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-
 import components.Computer;
 import ui.FrontPanel;
 import util.LogFormat;
@@ -15,6 +14,8 @@ public class Main {
     public static Logger LOGGER = Logger.getLogger("");
 
     public static void main(String[] args) {
+
+        System.setProperty("apple.awt.application.name", "Minicomputer");
 
         // Setup Logging
         try {
@@ -37,7 +38,10 @@ public class Main {
             computer.loadROM(iplFile);
         }
 
-        FrontPanel frontPanel = new FrontPanel(computer);
-        frontPanel.setVisible(true);
+        //OldFrontPanel frontPanel = new OldFrontPanel(computer);
+        //frontPanel.setVisible(true);
+
+        FrontPanel window = new FrontPanel();
+        window.setVisible(true);
     }
 }
