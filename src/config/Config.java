@@ -5,7 +5,7 @@ import java.awt.Font;
 public final class Config {
 
     // Enables/disabled debugging artifacts and output for the UI
-    public static final boolean   UI_DEBUG = true;
+    public static final boolean   UI_DEBUG = false;
 
     public static final double    UI_SCALE_WIDTH = 0.65;
 

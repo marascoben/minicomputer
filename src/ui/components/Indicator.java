@@ -77,7 +77,7 @@ public class Indicator extends JComponent {
         return new Dimension(WIDTH, HEIGHT);
     }
 
-    public void setState(boolean state) {
+    public void set(boolean state) {
         this.state = state;
         repaint();
     }

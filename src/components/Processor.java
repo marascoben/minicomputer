@@ -38,6 +38,15 @@ public class Processor {
         this.memory = memory;
     }
 
+    public void step() {
+        IR = memory.read(PC);
+        execute(IR);
+        PC++;
+    }
+
+    public void run() {
+    }
+
     public void execute(char word) {
         logInstruction(word);
 
@@ -226,7 +235,8 @@ public class Processor {
      * @param address The address to store the value to.
      */
     protected void storeIndexToMemory(IndexRegister ix, char address) {
-        LOGGER.info("Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
+        LOGGER.info(
+                "Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
 
         switch (ix) {
             case IX1:

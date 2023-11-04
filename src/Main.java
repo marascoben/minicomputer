@@ -38,10 +38,7 @@ public class Main {
             computer.loadROM(iplFile);
         }
 
-        //OldFrontPanel frontPanel = new OldFrontPanel(computer);
-        //frontPanel.setVisible(true);
-
-        FrontPanel window = new FrontPanel();
+        FrontPanel window = new FrontPanel(computer);
         window.setVisible(true);
     }
 }

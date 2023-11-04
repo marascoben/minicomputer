@@ -41,6 +41,13 @@ public class Computer {
         processor.execute(word);
     };
 
+    public void run() {
+    }
+
+    public void step() {
+        processor.step();
+    }
+
     /**
      * Loads a ROM file into the memory, this will overwrite any existing memory and
      * will not throw an exception if the file is invalid.

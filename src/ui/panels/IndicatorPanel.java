@@ -84,37 +84,37 @@ public class IndicatorPanel extends JPanel {
         // Setup indicator for condition code register
         ccGroup = new IndicatorGroup(4, false, "CC");
 
-        // Add memory buffer, address, and fault indicator groups to the panel
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        add(mfrGroup, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 3;
-        add(marGroup, gbc);
-
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        gbc.gridwidth = 4;
-        add(mbrGroup, gbc);
-
         // Add instruction, program counter, and condition code indicator groups to the panel
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 1;
         add(ccGroup, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 3;
         add(pcGroup, gbc);
 
         gbc.gridx = 4;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 4;
         add(irGroup, gbc);
+
+        // Add memory buffer, address, and fault indicator groups to the panel
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        add(mfrGroup, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        add(marGroup, gbc);
+
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.gridwidth = 4;
+        add(mbrGroup, gbc);
 
         // Add index register indicator groups to the panel
         gbc.gridx = 0;

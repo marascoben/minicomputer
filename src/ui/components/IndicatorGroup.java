@@ -101,13 +101,24 @@ public class IndicatorGroup extends JComponent {
 
     @Override
     public int getWidth() {
-        // TODO: Remove SPACING so that grids can line up properly, instead reduce overline width
+        // TODO: Remove SPACING so that grids can line up properly, instead reduce
+        // overline width
         return (Indicator.WIDTH * bits) + Indicator.SPACING;
     }
 
     @Override
     public int getHeight() {
         return HEIGHT;
+    }
+
+    public void set(char value) {
+        for (int i = 0; i < indicators.length; i++) {
+            int mask = 1 << i;
+            boolean state = (value & mask) >> i == 1;
+            indicators[(indicators.length - 1) - i].set(state);;
+        }
+
+        repaint();
     }
 
 }
