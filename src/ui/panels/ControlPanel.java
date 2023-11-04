@@ -1,15 +1,49 @@
 package ui.panels;
 
-import javax.swing.JPanel;
-import config.Config;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import javax.swing.JButton;
 
-public class ControlPanel extends JPanel {
+import ui.components.GroupPanel;
+
+public class ControlPanel extends GroupPanel {
+
+    public JButton runButton;
+
+    public JButton stepButton;
+
+    public JButton initButton;
+
+    public JButton loadButton;
+
     public ControlPanel() {
         super();
         setOpaque(false);
-                setBorder(javax.swing.BorderFactory.createEmptyBorder(Config.UI_MARGIN * 2,
-                Config.UI_MARGIN * 2,
-                Config.UI_MARGIN * 2,
-                Config.UI_MARGIN * 2));
+
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        runButton = new JButton("Run");
+        stepButton = new JButton("SS");
+        initButton = new JButton("Init");
+        loadButton = new JButton("Load");
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(initButton, gbc);
+        
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        add(loadButton, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        add(stepButton, gbc);
+
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        add(runButton, gbc);
+
     }
 }

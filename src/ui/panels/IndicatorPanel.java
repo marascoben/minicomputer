@@ -156,8 +156,8 @@ public class IndicatorPanel extends JPanel {
         g2d.fillRoundRect(Config.UI_MARGIN,
                 Config.UI_MARGIN,
                 getWidth() - (Config.UI_MARGIN * 2), getHeight() - (Config.UI_MARGIN * 2),
-                28,
-                28);
+                32,
+                32);
     }
 
 }

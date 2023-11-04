@@ -5,13 +5,13 @@ import java.awt.Font;
 public final class Config {
 
     // Enables/disabled debugging artifacts and output for the UI
-    public static final boolean   UI_DEBUG = false;
+    public static final boolean   UI_DEBUG = true;
 
     public static final double    UI_SCALE_WIDTH = 0.65;
 
-    public static final double    UI_SCALE_HEIGHT = 0.60;
+    public static final double    UI_SCALE_HEIGHT = 0.65;
 
-    public static final int       UI_MARGIN = 10;
+    public static final int       UI_MARGIN = 6;
 
     public static final int       UI_FONT_SIZE = 12;
 
