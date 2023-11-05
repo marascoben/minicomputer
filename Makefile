@@ -4,19 +4,27 @@ JARFLAGS = cfe
 
 BINDIR = bin
 
-JARFILE = Simple.jar
+JARFILE = minicomputer.jar
 
 # Java source files
-SOURCES = src/ui/FrontPanel.java \
-		  src/ui/Indicator.java \
-		  src/ui/IndicatorGroup.java \
-		  src/ui/IndicatorPanel.java \
-		  src/components/Computer.java \
+SOURCES = src/components/Computer.java \
 		  src/components/Memory.java \
 		  src/components/Processor.java \
-		  src/core/Instruction.java \
 		  src/core/GeneralRegister.java \
 		  src/core/IndexRegister.java \
+		  src/core/Instruction.java \
+		  src/config/Config.java \
+		  src/ui/components/GroupPanel.java \
+		  src/ui/components/Indicator.java \
+		  src/ui/components/IndicatorGroup.java \
+		  src/ui/panels/registers/GeneralRegisterPanel.java \
+		  src/ui/panels/registers/IndexRegisterPanel.java \
+		  src/ui/panels/registers/MiscRegisterPanel.java \
+		  src/ui/panels/ControlPanel.java \
+		  src/ui/panels/IndicatorPanel.java \
+		  src/ui/panels/RegisterPanel.java \
+		  src/ui/Colors.java \
+		  src/ui/FrontPanel.java \
 		  src/util/LogFormat.java \
 		  src/util/WordUtils.java \
 		  src/Main.java
