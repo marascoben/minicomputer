@@ -16,6 +16,7 @@ import config.Config;
 import ui.panels.ControlPanel;
 import ui.panels.IndicatorPanel;
 import ui.panels.RegisterPanel;
+import util.FormatUtils;
 
 public class FrontPanel extends JFrame {
 
@@ -114,14 +115,15 @@ public class FrontPanel extends JFrame {
 
     public void updateTextInputs() {
         // Update misc regsiter group text inputs
-        registerPanel.miscRegisterPanel.pc.setText(
-                String.format("%16s", Integer.toBinaryString(computer.processor.PC)).replace(' ', '0'));
+        registerPanel.miscRegisterPanel.pc.setText(FormatUtils.toBinaryString(computer.processor.PC, 16));
+        registerPanel.miscRegisterPanel.mar.setText(FormatUtils.toBinaryString(computer.processor.MAR, 12));
+        registerPanel.miscRegisterPanel.mbr.setText(FormatUtils.toBinaryString(computer.processor.MBR, 16));
 
-        registerPanel.miscRegisterPanel.mar.setText(
-                String.format("%12s", Integer.toBinaryString(computer.processor.MAR)).replace(' ', '0'));
-
-        registerPanel.miscRegisterPanel.mbr.setText(
-                String.format("%16s", Integer.toBinaryString(computer.processor.MBR)).replace(' ', '0'));
+        // Update general purpose register text inputs
+        registerPanel.generalRegisterPanel.r0.setText(FormatUtils.toBinaryString(computer.processor.R0, 16));
+        registerPanel.generalRegisterPanel.r1.setText(FormatUtils.toBinaryString(computer.processor.R1, 16));
+        registerPanel.generalRegisterPanel.r2.setText(FormatUtils.toBinaryString(computer.processor.R2, 16));
+        registerPanel.generalRegisterPanel.r3.setText(FormatUtils.toBinaryString(computer.processor.R3, 16));
     }
 
 }

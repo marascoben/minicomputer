@@ -42,6 +42,7 @@ public class Computer {
     };
 
     public void run() {
+        processor.run();
     }
 
     public void step() {

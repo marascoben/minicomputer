@@ -6,7 +6,7 @@ import core.IndexRegister;
 import core.Instruction;
 import util.WordUtils;
 
-public class Processor {
+public class Processor{
 
     private static final Logger LOGGER = Logger.getLogger(Processor.class.getName());
 
@@ -34,17 +34,25 @@ public class Processor {
     // Memory Object
     private Memory memory;
 
+    // Whether or not the minicomputer is halted
+    private boolean halted = false;
+
     public Processor(Memory memory) {
         this.memory = memory;
+    }
+
+    public void run() {
+        halted = false;
+
+        while(!halted) {
+            step();
+        }
     }
 
     public void step() {
         IR = memory.read(PC);
         execute(IR);
         PC++;
-    }
-
-    public void run() {
     }
 
     public void execute(char word) {
@@ -70,6 +78,7 @@ public class Processor {
                 storeIndexToMemory(IndexRegister.fromWord(word), effectiveAddress(word));
                 break;
             case TRP:
+                halt();
                 break;
         }
     }
@@ -124,15 +133,20 @@ public class Processor {
         return (char) CC;
     }
 
+    public boolean isHalted() {
+        return halted;
+    }
+
     protected void halt() {
         LOGGER.info("Halting minicomputer");
+        halted = true;
     }
 
     /**
-     * Load the contents of the address into the specified general purpose register.
+     * Load the contents of the address into the specified general purpose register
      * 
-     * @param r       The register to load the value into.
-     * @param address The address to load the value from.
+     * @param r       The register to load the value into
+     * @param address The address to load the value from
      */
     protected void loadFromMemory(GeneralRegister r, char address) {
         LOGGER.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
