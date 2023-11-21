@@ -48,25 +48,24 @@ public class FrontPanel extends JFrame {
             }
         });
 
+        computer.processor.addListener(() -> {
+            updateIndicators();
+            updateTextInputs();
+        });
+
         // Setup the intialize button action listener
         controlPanel.initButton.addActionListener(e -> {
             computer.reset();
-            updateIndicators();
-            updateTextInputs();
         });
 
         // Setup the Single Step button action listener
         controlPanel.stepButton.addActionListener(e -> {
             computer.step();
-            updateIndicators();
-            updateTextInputs();
         });
 
         // Setup the Run button action listener
         controlPanel.runButton.addActionListener(e -> {
             computer.run();
-            updateIndicators();
-            updateTextInputs();
         });
 
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import components.cpu.Processor;
+
 public class Computer {
 
     private static final Logger LOGGER = Logger.getLogger(Computer.class.getName());

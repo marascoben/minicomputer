@@ -1,12 +1,17 @@
-package components;
+package components.cpu;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+
+import components.Memory;
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
 import util.WordUtils;
+import ui.listeners.HardwareListener;
 
-public class Processor{
+public class Processor {
 
     private static final Logger LOGGER = Logger.getLogger(Processor.class.getName());
 
@@ -37,14 +42,26 @@ public class Processor{
     // Whether or not the minicomputer is halted
     private boolean halted = false;
 
+    // List of listeners
+    private List<HardwareListener> listeners = new ArrayList<>();
+
     public Processor(Memory memory) {
         this.memory = memory;
+    }
+
+    /**
+     * Attaches a HardwareListener to the processor.
+     * 
+     * @param listener The listener to add.
+     */
+    public void addListener(HardwareListener listener) {
+        listeners.add(listener);
     }
 
     public void run() {
         halted = false;
 
-        while(!halted) {
+        while (!halted) {
             step();
         }
     }
@@ -53,26 +70,71 @@ public class Processor{
         IR = memory.read(PC);
         execute(IR);
         PC++;
+        notifyListeners();
     }
 
     public void execute(char word) {
         logInstruction(word);
 
         switch (Instruction.fromWord(word)) {
+            case AIR:
+                break;
+            case AMR:
+                break;
+            case AND:
+                break;
+            case CHK:
+                break;
+            case DVD:
+                break;
             case HLT:
                 halt();
                 break;
-            case LDR:
-                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+            case IN:
                 break;
-            case STR:
-                storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+            case JCC:
+                break;
+            case JGE:
+                break;
+            case JMA:
+                break;
+            case JNE:
+                break;
+            case JSR:
+                break;
+            case JZ:
                 break;
             case LDA:
                 loadAddress(GeneralRegister.fromWord(word), effectiveAddress(word));
                 break;
+            case LDR:
+                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                break;
             case LDX:
                 loadIndexFromMemory(IndexRegister.fromWord(word), effectiveAddress(word));
+                break;
+            case MLT:
+                break;
+            case NOT:
+                break;
+            case ORR:
+                break;
+            case OUT:
+                break;
+            case RFS:
+                break;
+            case RRC:
+                break;
+            case SIR:
+                break;
+            case SMR:
+                break;
+            case SOB:
+                break;
+            case SRC:
+                break;
+            case STR:
+                storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
                 break;
             case STX:
                 storeIndexToMemory(IndexRegister.fromWord(word), effectiveAddress(word));
@@ -80,6 +142,11 @@ public class Processor{
             case TRP:
                 halt();
                 break;
+            case TRR:
+                break;
+            default:
+                break;
+
         }
     }
 
@@ -264,6 +331,12 @@ public class Processor{
                 break;
             default:
                 break;
+        }
+    }
+
+    private void notifyListeners() {
+        for (HardwareListener listener : listeners) {
+            listener.onUpdate();
         }
     }
 

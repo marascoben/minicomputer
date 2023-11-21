@@ -7,5 +7,5 @@ public interface HardwareListener extends EventListener {
     /**
      * Called when hardware properties have been updated
      */
-    void onUpdate();
+    public void onUpdate();
 }
