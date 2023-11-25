@@ -1,9 +1,6 @@
 package components;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import components.cpu.Processor;
@@ -18,74 +15,73 @@ public class Computer {
     // The memory object of the minicomputer
     public Memory memory;
 
-    // The ROM file to load into memory
-    public File rom;
+    // The initial program loader ROM
+    public ROM ipl;
 
+    // ROM files that have been loaded into memory
+    public List<ROM> roms;
+
+    /**
+     * Creates a new minicomputer with a memory and processor.
+     */
     public Computer() {
         memory = new Memory();
         processor = new Processor(memory);
-
-        LOGGER.info("Minicomputer started");
-    }
-
-    public void reset() {
-        memory = new Memory();
-        processor = new Processor(memory);
-
-        if (rom != null) {
-            loadROM(rom);
-        }
-
-        LOGGER.info("Resetting minicomputer");
-    }
-
-    public void runInstruction(char word) {
-        processor.execute(word);
-    };
-
-    public void run() {
-        processor.run();
-    }
-
-    public void step() {
-        processor.step();
+        roms = new java.util.ArrayList<ROM>();
     }
 
     /**
-     * Loads a ROM file into the memory, this will overwrite any existing memory and
-     * will not throw an exception if the file is invalid.
+     * Creates a new minicomputer with a memory and processor and loads the initial
+     * program loader ROM.
      * 
-     * @param file The ROM file to load.
+     * @param ipl The initial program loader ROM.
      */
-    public void loadROM(File file) {
-        if (rom == null) {
-            rom = file;
+    public Computer(ROM ipl) {
+        this();
+        this.ipl = ipl;
+        loadROM(ipl);
+    }
+
+    /**
+     * Loads the provided ROM file into memory, and adds to the list of loaded ROMs.
+     * 
+     * @param rom The ROM file to load.
+     */
+    public void loadROM(ROM rom) {
+        LOGGER.info("Loading ROM file " + rom.getPath());
+        roms.add(rom);
+
+        for (char address : rom.read().keySet()) {
+            memory.privilegedWrite(address, rom.read().get(address));
         }
+    }
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+    /**
+     * Resets the minicomputer by clearing the memory and processor,
+     * clears the ROMs and loads the initial program loader ROM.
+     */
+    public void reset() {
+        memory = new Memory();
+        processor = new Processor(memory);
+        roms.clear();
 
-            LOGGER.info("Loading ROM file " + file.getName());
+        LOGGER.info("Reset the minicomputer");
+    }
 
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(" ");
+    /**
+     * Tells the processor to run with the current instruction address.
+     */
+    public void run() {
+        LOGGER.info("Beginning RUN execution mode");
+        processor.run();
+    }
 
-                char address = (char) Integer.parseInt(parts[0], 16);
-                char data = (char) Integer.parseInt(parts[1], 16);
-
-                LOGGER.info("\u2523 Writing " + String.format("0x%08X", (short) data) + " to memory location "
-                        + String.format("0x%08X", (short) address));
-
-                memory.privilegedWrite(address, data);
-            }
-
-            br.close();
-            LOGGER.info("\u2517 ROM file " + file.getName() + " finished loading");
-
-        } catch (IOException e) {
-            LOGGER.warning("Failed to load ROM file " + file.getName() + ": " + e.getMessage());
-        }
+    /**
+     * Tells the processor to step through the next instruction.
+     */
+    public void step() {
+        LOGGER.info("Beginning STEP execution mode");
+        processor.step();
     }
 
 }

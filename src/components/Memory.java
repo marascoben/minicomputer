@@ -85,4 +85,11 @@ public class Memory {
 
         region.put(address, data);
     }
+
+    public void importROM(ROM rom) {
+        // Loop through the ROM region and write each word to the memory
+        for (Map.Entry<Character, Character> entry : rom.read().entrySet()) {
+            privilegedWrite(entry.getKey(), entry.getValue());
+        }
+    }
 }

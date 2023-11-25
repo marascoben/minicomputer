@@ -4,6 +4,10 @@ import java.awt.Font;
 
 public final class Config {
 
+    public static final String    ROM_IPL_FILENAME = "IPL.txt";
+
+    public static final String    ROM_FILE_EXTENSION = "txt";
+
     // Enables/disabled debugging artifacts and output for the UI
     public static final boolean   UI_DEBUG = false;
 

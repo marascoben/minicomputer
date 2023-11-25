@@ -8,10 +8,14 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import components.Computer;
+import components.ROM;
 import config.Config;
 import ui.panels.ControlPanel;
 import ui.panels.IndicatorPanel;
@@ -20,10 +24,13 @@ import util.FormatUtils;
 
 public class FrontPanel extends JFrame {
 
+    // Panel containing all of the indicator lights for registers
     public IndicatorPanel indicatorPanel = new IndicatorPanel();
 
+    // Panel containing control buttons for the minicomputer
     public ControlPanel controlPanel = new ControlPanel();
 
+    // Panel containing all text inputs for settable registers
     public RegisterPanel registerPanel = new RegisterPanel();
 
     private final JFileChooser fileChooser = new JFileChooser();
@@ -38,13 +45,14 @@ public class FrontPanel extends JFrame {
         // Setup the file chooser for loading ROMs
         fileChooser.setDialogTitle("Load ROM");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("ROM (.txt)", "txt"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("ROM (.txt)", Config.ROM_FILE_EXTENSION));
 
         // Setup the load button action listener
         controlPanel.loadButton.addActionListener(e -> {
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                computer.loadROM(fileChooser.getSelectedFile());
+                ROM rom = new ROM(fileChooser.getSelectedFile());
+                computer.loadROM(rom);
             }
         });
 

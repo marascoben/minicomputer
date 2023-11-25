@@ -2,6 +2,7 @@ import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import components.Computer;
+import components.ROM;
 import ui.FrontPanel;
 import util.LogFormat;
 
@@ -29,13 +30,15 @@ public class Main {
             // TODO: handle exception
         }
 
-        Computer computer = new Computer();
+        Computer computer;
 
         // Check for the presence of an IPL file to use as ROM, if it is present then
         // load to memory
         File iplFile = new File(IPL_FILE);
         if (iplFile.exists()) {
-            computer.loadROM(iplFile);
+            computer = new Computer(new ROM(iplFile));
+        } else {
+            computer = new Computer();
         }
 
         FrontPanel window = new FrontPanel(computer);
