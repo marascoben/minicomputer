@@ -42,6 +42,9 @@ public class Processor {
     // Whether or not the minicomputer is halted
     private boolean halted = false;
 
+    // Whether or not to increment the PC after executing an instruction
+    private boolean incrementPC = true;
+
     // List of listeners
     private List<HardwareListener> listeners = new ArrayList<>();
 
@@ -67,9 +70,14 @@ public class Processor {
     }
 
     public void step() {
+        incrementPC = true;
+
         IR = memory.read(PC);
         execute(IR);
-        PC++;
+
+        if (incrementPC)
+            PC++;
+
         notifyListeners();
     }
 
@@ -78,8 +86,10 @@ public class Processor {
 
         switch (Instruction.fromWord(word)) {
             case AIR:
+                // Add Immediate to Register
                 break;
             case AMR:
+                // Add Memory to Register
                 break;
             case AND:
                 break;
@@ -95,20 +105,43 @@ public class Processor {
             case JCC:
                 break;
             case JGE:
+                if (getValue(GeneralRegister.fromWord(word)) >= 0) {
+                    this.PC = effectiveAddress(word);
+                    skipIncrement();
+                }
                 break;
             case JMA:
+                // Jump to Address
+                this.PC = effectiveAddress(word);
+                skipIncrement();
                 break;
             case JNE:
+                // Jump if Not Equal
+                if (getValue(GeneralRegister.fromWord(word)) != 0) {
+                    this.PC = effectiveAddress(word);
+                    skipIncrement();
+                }
                 break;
             case JSR:
+                // Jump to Subroutine
+                this.R3 = this.PC++;
+                this.PC = effectiveAddress(word);
+                skipIncrement();
                 break;
             case JZ:
+                // Jump if Zero
+                if (getValue(GeneralRegister.fromWord(word)) == 0) {
+                    this.PC = effectiveAddress(word);
+                    skipIncrement();
+                }
                 break;
             case LDA:
-                loadAddress(GeneralRegister.fromWord(word), effectiveAddress(word));
+                // Load Register with Address
+                setValue(GeneralRegister.fromWord(word), effectiveAddress(word));
                 break;
             case LDR:
-                loadFromMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                // Load Register from Memory
+                setValue(GeneralRegister.fromWord(word), memory.read(effectiveAddress(word)));
                 break;
             case LDX:
                 loadIndexFromMemory(IndexRegister.fromWord(word), effectiveAddress(word));
@@ -261,31 +294,6 @@ public class Processor {
     }
 
     /**
-     * Load the address into the specified general purpose register.
-     * 
-     * @param r       The register to load the value into.
-     * @param address The address to load the value from.
-     */
-    protected void loadAddress(GeneralRegister r, char address) {
-        LOGGER.info("Loading address " + String.format("0x%08X", (short) address) + " to register " + r);
-
-        switch (r) {
-            case GPR0:
-                R0 = address;
-                break;
-            case GPR1:
-                R1 = address;
-                break;
-            case GPR2:
-                R2 = address;
-                break;
-            case GPR3:
-                R3 = address;
-                break;
-        }
-    }
-
-    /**
      * Load the contents of the address into the specified index register.
      * 
      * @param ix      The index register to load the value into.
@@ -332,6 +340,62 @@ public class Processor {
             default:
                 break;
         }
+    }
+
+    /**
+     * Returns the current value of the specified general purpose register.
+     * 
+     * @param r The register to read from.
+     * @return The value of the register.
+     */
+    private char getValue(GeneralRegister r) {
+        switch (r) {
+            case GPR0:
+                return R0;
+            case GPR1:
+                return R1;
+            case GPR2:
+                return R2;
+            case GPR3:
+                return R3;
+            default:
+                LOGGER.severe("Invalid register " + r);
+                return 0;
+        }
+    }
+
+    /**
+     * Sets the value of the specified general purpose register.
+     * 
+     * @param r     The register to set the value of.
+     * @param value The value to set the register to.
+     */
+    private void setValue(GeneralRegister r, char value) {
+        switch (r) {
+            case GPR0:
+                R0 = value;
+                break;
+            case GPR1:
+                R1 = value;
+                break;
+            case GPR2:
+                R2 = value;
+                break;
+            case GPR3:
+                R3 = value;
+                break;
+            default:
+                LOGGER.severe("Invalid register " + r);
+                break;
+        }
+    }
+
+    /**
+     * Causes the processor to skip incrementing the program counter after the
+     * execution of the current instruction.
+     */
+    private void skipIncrement() {
+        incrementPC = false;
     }
 
     private void notifyListeners() {

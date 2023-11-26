@@ -9,7 +9,7 @@ public enum Instruction {
     STX((byte) 0b100010), // Store Index Register to Memory
 
     // Transfer of Control Operations
-    JZ ((byte) 0b001010), // Jump if Zero
+    JZ((byte) 0b001010), // Jump if Zero
     JNE((byte) 0b001011), // Jump if Not Equal
     JCC((byte) 0b001100), // Jump if Condition Code
     JMA((byte) 0b001101), // Jump Unconditionally
@@ -35,7 +35,7 @@ public enum Instruction {
     RRC((byte) 0b011001), // Rotate Register by Count
 
     // I/O Operations
-    IN ((byte) 0b111101), // Input Character to Register from Device
+    IN((byte) 0b111101), // Input Character to Register from Device
     OUT((byte) 0b111110), // Output Character to Device from Register
     CHK((byte) 0b111111), // Check Device Status to Register
     TRP((byte) 0b011000); // TRAP
@@ -76,5 +76,15 @@ public enum Instruction {
         // Left shift by 10 bits to get rid of the opcode, index register, and GPR, then
         // right shift by 15 bits to get rid of the last 15 bits
         return ((word << 10) >> 15) == 1;
+    }
+
+    /**
+     * Retrieve the address bits in an instruction, 11 through 15
+     * 
+     * @param word The word to read from.
+     * @return The data stored in bits 11-15.
+     */
+    public static byte getAddress(char word) {
+        return (byte) (word & 0b0000000000011111);
     }
 }
