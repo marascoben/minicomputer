@@ -9,9 +9,9 @@ public class InstructionTest {
     public void InvalidInstruction_ShouldHalt() {
         char instruction = 0b1111110000000000;
 
-        Instruction result = Instruction.fromWord(instruction);
+        Opcode result = Opcode.fromWord(instruction);
 
-        assertEquals("Invalid opcode produces halt", Instruction.HLT, result);
+        assertEquals("Invalid opcode produces halt", Opcode.HLT, result);
     }
 
 }

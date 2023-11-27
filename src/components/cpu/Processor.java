@@ -8,6 +8,8 @@ import components.Memory;
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
+import core.Opcode;
+import core.func.ArithmeticFunction;
 import util.WordUtils;
 import ui.listeners.HardwareListener;
 
@@ -73,7 +75,8 @@ public class Processor {
         incrementPC = true;
 
         IR = memory.read(PC);
-        execute(IR);
+
+        execute(new Instruction(IR));
 
         if (incrementPC)
             PC++;
@@ -81,15 +84,29 @@ public class Processor {
         notifyListeners();
     }
 
-    public void execute(char word) {
-        logInstruction(word);
-
-        switch (Instruction.fromWord(word)) {
+    public void execute(Instruction i) {
+        switch (i.getOpcode()) {
             case AIR:
-                // Add Immediate to Register
+                // Add Immediate to Register;
+                setValue(i.getGPR(), (char value) -> {
+                    if (i.getImmed() == 0)
+                        return value;
+
+                    if (value == 0)
+                        return i.getImmed();
+
+                    return ALU.add(value, i.getImmed());
+                });
                 break;
             case AMR:
                 // Add Memory to Register
+                setValue(i.getGPR(), (char value) -> {
+                    if(value == 0){
+                        return memory.read(effectiveAddress(i.word));
+                    } else {
+                        return ALU.add(value, memory.read(effectiveAddress(i.word)));
+                    }
+                });
                 break;
             case AND:
                 break;
@@ -105,46 +122,46 @@ public class Processor {
             case JCC:
                 break;
             case JGE:
-                if (getValue(GeneralRegister.fromWord(word)) >= 0) {
-                    this.PC = effectiveAddress(word);
+                if (getValue(i.getGPR()) >= 0) {
+                    this.PC = effectiveAddress(i.word);
                     skipIncrement();
                 }
                 break;
             case JMA:
                 // Jump to Address
-                this.PC = effectiveAddress(word);
+                this.PC = effectiveAddress(i.word);
                 skipIncrement();
                 break;
             case JNE:
                 // Jump if Not Equal
-                if (getValue(GeneralRegister.fromWord(word)) != 0) {
-                    this.PC = effectiveAddress(word);
+                if (getValue(GeneralRegister.fromWord(i.word)) != 0) {
+                    this.PC = effectiveAddress(i.word);
                     skipIncrement();
                 }
                 break;
             case JSR:
                 // Jump to Subroutine
                 this.R3 = this.PC++;
-                this.PC = effectiveAddress(word);
+                this.PC = effectiveAddress(i.word);
                 skipIncrement();
                 break;
             case JZ:
                 // Jump if Zero
-                if (getValue(GeneralRegister.fromWord(word)) == 0) {
-                    this.PC = effectiveAddress(word);
+                if (getValue(GeneralRegister.fromWord(i.word)) == 0) {
+                    this.PC = effectiveAddress(i.word);
                     skipIncrement();
                 }
                 break;
             case LDA:
                 // Load Register with Address
-                setValue(GeneralRegister.fromWord(word), effectiveAddress(word));
+                setValue(i.getGPR(), effectiveAddress(i.word));
                 break;
             case LDR:
                 // Load Register from Memory
-                setValue(GeneralRegister.fromWord(word), memory.read(effectiveAddress(word)));
+                setValue(i.getGPR(), memory.read(effectiveAddress(i.word)));
                 break;
             case LDX:
-                loadIndexFromMemory(IndexRegister.fromWord(word), effectiveAddress(word));
+                loadIndexFromMemory(i.getIXR(), effectiveAddress(i.word));
                 break;
             case MLT:
                 break;
@@ -159,6 +176,16 @@ public class Processor {
             case RRC:
                 break;
             case SIR:
+                // Subtract Immediate from Register
+                setValue(i.getGPR(), (char value) -> {
+                    if (i.getImmed() == 0)
+                        return value;
+
+                    if (value == 0)
+                        return i.getImmed();
+
+                    return ALU.subtract(value, i.getImmed());
+                });
                 break;
             case SMR:
                 break;
@@ -167,10 +194,10 @@ public class Processor {
             case SRC:
                 break;
             case STR:
-                storeToMemory(GeneralRegister.fromWord(word), effectiveAddress(word));
+                storeToMemory(i.getGPR(), effectiveAddress(i.word));
                 break;
             case STX:
-                storeIndexToMemory(IndexRegister.fromWord(word), effectiveAddress(word));
+                storeIndexToMemory(i.getIXR(), effectiveAddress(i.word));
                 break;
             case TRP:
                 halt();
@@ -192,7 +219,7 @@ public class Processor {
     public char effectiveAddress(char word) {
         IndexRegister ix = IndexRegister.fromWord(word);
 
-        if (Instruction.isIndirectAddressing(word)) {
+        if (Opcode.isIndirectAddressing(word)) {
             // Indirect addressing but NO indexing
             LOGGER.fine("Computing effective address with indirect addressing");
             switch (ix) {
@@ -364,6 +391,11 @@ public class Processor {
         }
     }
 
+    private void setValue(GeneralRegister r, ArithmeticFunction f) {
+        char value = f.evaluate(getValue(r));
+        setValue(r, value);
+    }
+
     /**
      * Sets the value of the specified general purpose register.
      * 
@@ -409,7 +441,7 @@ public class Processor {
         IndexRegister ix = IndexRegister.fromWord(word);
         char address = effectiveAddress(word);
 
-        LOGGER.info("Running instruction: " + Instruction.fromWord(word) + " " + r + " " + ix + " "
+        LOGGER.info("Running instruction: " + Opcode.fromWord(word) + " " + r + " " + ix + " "
                 + String.format("0x%08X", (short) address));
     }
 }
