@@ -13,7 +13,7 @@ public class FormatUtils {
     }
 
     public static String toHexString(char value){
-        return String.format("0x%08X", (short) value);
+        return String.format("0x%04X", (int) value);
     }
 
 }

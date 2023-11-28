@@ -21,6 +21,9 @@ public class InstructionTest {
     // GPR 3
     char GPR3 = 0b0000001100000000;
 
+    // Address 1
+    char address1 = 0b0000000000000001;
+
     @Test
     public void getGPR_ShouldReturnGPR0() {
         Instruction i = new Instruction(GPR0);
@@ -47,6 +50,13 @@ public class InstructionTest {
         Instruction i = new Instruction(GPR3);
 
         assertEquals("GPR3 should be returned", GeneralRegister.GPR3, i.getGPR());
+    }
+
+    @Test
+    public void getAddress_ShouldReturnAddress1() {
+        Instruction i = new Instruction(address1);
+
+        assertEquals("Address 1 should be returned", address1, i.getAddress());
     }
 
     @Test

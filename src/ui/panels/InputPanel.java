@@ -9,7 +9,7 @@ import ui.panels.registers.GeneralRegisterPanel;
 import ui.panels.registers.IndexRegisterPanel;
 import ui.panels.registers.MiscRegisterPanel;
 
-public class RegisterPanel extends JPanel {
+public class InputPanel extends JPanel {
     
     public GeneralRegisterPanel generalRegisterPanel;
 
@@ -17,7 +17,7 @@ public class RegisterPanel extends JPanel {
 
     public MiscRegisterPanel miscRegisterPanel;
 
-    public RegisterPanel() {
+    public InputPanel() {
         super();
         setOpaque(false);
         setLayout(new GridBagLayout());

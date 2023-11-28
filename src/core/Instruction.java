@@ -22,6 +22,10 @@ public class Instruction {
     public Opcode getOpcode() {
         return Opcode.fromWord(word);
     }
+    
+    public byte getRawOpcode() {
+        return (byte) (word >> 10);
+    }
 
     /**
      * Returns the address value stored in the instruction
@@ -57,7 +61,7 @@ public class Instruction {
      * @return The register
      */
     public IndexRegister getIXR() {
-        return IndexRegister.fromWord(word);
+        return IndexRegister.fromByte((byte) ((word >> 6) & 0b11));
     }
 
     /**
@@ -90,6 +94,7 @@ public class Instruction {
     @Override
     public String toString() {
         return getOpcode() + "\n" +
+                "Raw: " + Integer.toBinaryString(getRawOpcode()) + "\n" +
                 "Address: " + FormatUtils.toHexString(getAddress()) + "\n" +
                 "Immed: " + FormatUtils.toHexString(getAddress()) + "\n" +
                 "GPR: " + getGPR() + "\n" +

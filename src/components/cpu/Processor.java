@@ -63,6 +63,9 @@ public class Processor {
         listeners.add(listener);
     }
 
+    /**
+     * Starts the processor, executing instructions until halted.
+     */
     public void run() {
         halted = false;
 
@@ -71,6 +74,9 @@ public class Processor {
         }
     }
 
+    /**
+     * Executes a single instruction.
+     */
     public void step() {
         incrementPC = true;
 
@@ -84,6 +90,11 @@ public class Processor {
         notifyListeners();
     }
 
+    /**
+     * Executes the given instruction.
+     * 
+     * @param i The instruction to execute.
+     */
     public void execute(Instruction i) {
         LOGGER.info("Executing instruction: " + i.toString());
 
@@ -206,6 +217,8 @@ public class Processor {
             case TRR:
                 break;
             default:
+                LOGGER.severe("An invalid opcode was encountered: " + i.getOpcode());
+                halt();
                 break;
 
         }
@@ -406,6 +419,12 @@ public class Processor {
         }
     }
 
+    /**
+     * Returns the current value of the specified index register.
+     * 
+     * @param r The register to read from.
+     * @return The value of the register.
+     */
     private char getValue(IndexRegister r) {
         switch (r) {
             case IX1:

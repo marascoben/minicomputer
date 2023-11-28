@@ -5,6 +5,9 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,10 +19,12 @@ import components.ROM;
 import config.Config;
 import ui.panels.ControlPanel;
 import ui.panels.IndicatorPanel;
-import ui.panels.RegisterPanel;
+import ui.panels.InputPanel;
 import util.FormatUtils;
 
 public class FrontPanel extends JFrame {
+
+    private static final Logger LOGGER = Logger.getLogger(Computer.class.getName());
 
     // Panel containing all of the indicator lights for registers
     public IndicatorPanel indicatorPanel = new IndicatorPanel();
@@ -28,7 +33,7 @@ public class FrontPanel extends JFrame {
     public ControlPanel controlPanel = new ControlPanel();
 
     // Panel containing all text inputs for settable registers
-    public RegisterPanel registerPanel = new RegisterPanel();
+    public InputPanel inputPanel = new InputPanel();
 
     private final JFileChooser fileChooser = new JFileChooser();
 
@@ -53,6 +58,10 @@ public class FrontPanel extends JFrame {
             }
         });
 
+        /*
+         * Setup all of the action and event listeners for the front panel
+         */
+
         computer.processor.addListener(() -> {
             updateIndicators();
             updateTextInputs();
@@ -73,6 +82,21 @@ public class FrontPanel extends JFrame {
             computer.run();
         });
 
+        // Update the program counter when the user changes the value in the text box
+        inputPanel.miscRegisterPanel.pc.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
+                LOGGER.info("Updating PC value");
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        computer.processor.PC = (char) Integer.parseInt(inputPanel.miscRegisterPanel.pc.getText(), 16);
+                        updateIndicators();
+                    } catch (NumberFormatException e) {
+                        LOGGER.warning("Failed to parse PC value: " + e.getMessage());
+                    }
+                }
+            }
+        });
+
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int width = gd.getDisplayMode().getWidth();
         int height = gd.getDisplayMode().getHeight();
@@ -91,7 +115,7 @@ public class FrontPanel extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.BOTH;
-        stackPanel.add(registerPanel, gbc);
+        stackPanel.add(inputPanel, gbc);
 
         add(indicatorPanel, BorderLayout.CENTER);
         add(stackPanel, BorderLayout.SOUTH);
@@ -119,15 +143,15 @@ public class FrontPanel extends JFrame {
 
     public void updateTextInputs() {
         // Update misc regsiter group text inputs
-        registerPanel.miscRegisterPanel.pc.setText(FormatUtils.toBinaryString(computer.processor.PC, 16));
-        registerPanel.miscRegisterPanel.mar.setText(FormatUtils.toBinaryString(computer.processor.MAR, 12));
-        registerPanel.miscRegisterPanel.mbr.setText(FormatUtils.toBinaryString(computer.processor.MBR, 16));
+        inputPanel.miscRegisterPanel.pc.setText(FormatUtils.toHexString(computer.processor.PC));
+        inputPanel.miscRegisterPanel.mar.setText(FormatUtils.toBinaryString(computer.processor.MAR, 12));
+        inputPanel.miscRegisterPanel.mbr.setText(FormatUtils.toBinaryString(computer.processor.MBR, 16));
 
         // Update general purpose register text inputs
-        registerPanel.generalRegisterPanel.r0.setText(FormatUtils.toBinaryString(computer.processor.R0, 16));
-        registerPanel.generalRegisterPanel.r1.setText(FormatUtils.toBinaryString(computer.processor.R1, 16));
-        registerPanel.generalRegisterPanel.r2.setText(FormatUtils.toBinaryString(computer.processor.R2, 16));
-        registerPanel.generalRegisterPanel.r3.setText(FormatUtils.toBinaryString(computer.processor.R3, 16));
+        inputPanel.generalRegisterPanel.r0.setText(FormatUtils.toBinaryString(computer.processor.R0, 16));
+        inputPanel.generalRegisterPanel.r1.setText(FormatUtils.toBinaryString(computer.processor.R1, 16));
+        inputPanel.generalRegisterPanel.r2.setText(FormatUtils.toBinaryString(computer.processor.R2, 16));
+        inputPanel.generalRegisterPanel.r3.setText(FormatUtils.toBinaryString(computer.processor.R3, 16));
     }
 
 }
