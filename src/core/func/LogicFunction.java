@@ -3,8 +3,8 @@ package core.func;
 public interface LogicFunction {
 
     /**
-     * Evaluates the supplied logic function on the given inputs, and returns
-     * the resultant that should be assigned to RX
+     * A function which when run will evaluate the logc function on the given
+     * inputs, and returns the resultant value of the operation.
      * 
      * @param rx The value of RX
      * @param ry The value of RY

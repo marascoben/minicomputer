@@ -9,7 +9,9 @@ import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
 import core.func.ArithmeticFunction;
+import core.func.LoadFunction;
 import core.func.LogicFunction;
+import core.func.StoreFunction;
 import core.func.TransferFunction;
 import ui.listeners.HardwareListener;
 
@@ -168,10 +170,10 @@ public class Processor {
                 load(i.getGPR(), effectiveAddress(i));
                 break;
             case LDR:
-                load(i.getGPR(), memory.read(effectiveAddress(i)));
+                load(effectiveAddress(i), (char value) -> load(i.getGPR(), value));
                 break;
             case LDX:
-                load(i.getIXR(), effectiveAddress(i));
+                load(effectiveAddress(i), (char value) -> load(i.getIXR(), value));
                 break;
             case MLT:
                 break;
@@ -206,10 +208,10 @@ public class Processor {
             case SRC:
                 break;
             case STR:
-                store(i.getGPR(), effectiveAddress(i));
+                store(effectiveAddress(i), () -> getValue(i.getGPR()));
                 break;
             case STX:
-                store(i.getIXR(), effectiveAddress(i));
+                store(effectiveAddress(i), () -> getValue(i.getIXR()));
                 break;
             case TRP:
                 halt();
@@ -313,52 +315,29 @@ public class Processor {
     }
 
     /**
-     * Stores the value of the specified general purpose register into the address.
+     * Retrieves the value stored at the given address and uses the result to run
+     * the given load function.
      * 
-     * @param r       The register to store the value from.
-     * @param address The address to store the value to.
+     * @param r The register to store the result in.
+     * @param f The load function to evaluate.
      */
-    protected void store(GeneralRegister r, char address) {
-        switch (r) {
-            case GPR0:
-                memory.write(address, R0);
-                break;
-            case GPR1:
-                memory.write(address, R1);
-                break;
-            case GPR2:
-                memory.write(address, R2);
-                break;
-            case GPR3:
-                memory.write(address, R3);
-                break;
-            default:
-                LOGGER.severe("Invalid general purpose register " + r);
-                break;
-        }
+    protected void load(char address, LoadFunction f) {
+        MBR = memory.read(address);
+        MAR = address;
+        f.evaluate(MBR);
     }
 
     /**
-     * Stores the value of the specified index register into the address.
+     * Evaluates the given store function, which returns the value to be written to
+     * memory, and stores the result at the given address.
      * 
-     * @param r       The register to store the value from.
-     * @param address The address to store the value to.
+     * @param address The address to store the result at.
+     * @param f       The store function to evaluate.
      */
-    protected void store(IndexRegister r, char address) {
-        switch (r) {
-            case IX1:
-                memory.write(address, X1);
-                break;
-            case IX2:
-                memory.write(address, X2);
-                break;
-            case IX3:
-                memory.write(address, X3);
-                break;
-            default:
-                LOGGER.severe("Invalid index register " + r);
-                break;
-        }
+    protected void store(char address, StoreFunction f) {
+        MBR = f.evaluate();
+        MAR = address;
+        memory.write(MAR, MBR);
     }
 
     /**
