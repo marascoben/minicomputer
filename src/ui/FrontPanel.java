@@ -85,7 +85,6 @@ public class FrontPanel extends JFrame {
         // Update the program counter when the user changes the value in the text box
         inputPanel.miscRegisterPanel.pc.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent evt) {
-                LOGGER.info("Updating PC value");
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     try {
                         computer.processor.PC = (char) Integer.parseInt(inputPanel.miscRegisterPanel.pc.getText(), 16);

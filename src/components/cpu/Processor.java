@@ -231,6 +231,8 @@ public class Processor {
      * @return The effective address from the instruction
      */
     public char effectiveAddress(Instruction i) {
+        // TODO: No indexing will generate a severe log message, even though in this
+        // context it is not an error.
         if (i.isIndirectAddressing()) {
             LOGGER.fine("Evaluating effective address with indirect addressing");
             return memory.read(ALU.add(getValue(i.getIXR()), i.getAddress()));
