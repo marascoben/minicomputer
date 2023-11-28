@@ -184,6 +184,10 @@ public class Processor {
             case OUT:
                 break;
             case RFS:
+                jump(i, (char value) -> {
+                    R0 = i.getImmed();
+                    return R3;
+                });
                 break;
             case RRC:
                 break;
@@ -204,6 +208,14 @@ public class Processor {
                 });
                 break;
             case SOB:
+                jump(i, (char value) -> {
+                    load(i.getGPR(), value--);
+                    if (value > 0) {
+                        return effectiveAddress(i);
+                    } else {
+                        return PC++;
+                    }
+                });
                 break;
             case SRC:
                 break;
