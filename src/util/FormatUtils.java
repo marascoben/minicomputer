@@ -12,4 +12,8 @@ public class FormatUtils {
         return String.format("%" + length + "s", Integer.toBinaryString(value)).replace(' ', '0');
     }
 
+    public static String toHexString(char value){
+        return String.format("0x%08X", (short) value);
+    }
+
 }

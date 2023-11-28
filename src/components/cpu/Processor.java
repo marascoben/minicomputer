@@ -8,9 +8,9 @@ import components.Memory;
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
-import core.Opcode;
 import core.func.ArithmeticFunction;
-import util.WordUtils;
+import core.func.LogicFunction;
+import core.func.TransferFunction;
 import ui.listeners.HardwareListener;
 
 public class Processor {
@@ -85,10 +85,11 @@ public class Processor {
     }
 
     public void execute(Instruction i) {
+        LOGGER.info("Executing instruction: " + i.toString());
+
         switch (i.getOpcode()) {
             case AIR:
-                // Add Immediate to Register;
-                setValue(i.getGPR(), (char value) -> {
+                arithmetic(i, (char value) -> {
                     if (i.getImmed() == 0)
                         return value;
 
@@ -99,13 +100,8 @@ public class Processor {
                 });
                 break;
             case AMR:
-                // Add Memory to Register
-                setValue(i.getGPR(), (char value) -> {
-                    if(value == 0){
-                        return memory.read(effectiveAddress(i.word));
-                    } else {
-                        return ALU.add(value, memory.read(effectiveAddress(i.word)));
-                    }
+                arithmetic(i, (char value) -> {
+                    return ALU.add(value, memory.read(effectiveAddress(i)));
                 });
                 break;
             case AND:
@@ -122,46 +118,49 @@ public class Processor {
             case JCC:
                 break;
             case JGE:
-                if (getValue(i.getGPR()) >= 0) {
-                    this.PC = effectiveAddress(i.word);
-                    skipIncrement();
-                }
+                jump(i, (char value) -> {
+                    if (value > 0) {
+                        return effectiveAddress(i);
+                    } else {
+                        return PC++;
+                    }
+                });
                 break;
             case JMA:
-                // Jump to Address
-                this.PC = effectiveAddress(i.word);
-                skipIncrement();
+                jump(i, (char value) -> effectiveAddress(i));
                 break;
             case JNE:
-                // Jump if Not Equal
-                if (getValue(GeneralRegister.fromWord(i.word)) != 0) {
-                    this.PC = effectiveAddress(i.word);
-                    skipIncrement();
-                }
+                jump(i, (char value) -> {
+                    if (value != 0) {
+                        return effectiveAddress(i);
+                    } else {
+                        return PC++;
+                    }
+                });
                 break;
             case JSR:
-                // Jump to Subroutine
-                this.R3 = this.PC++;
-                this.PC = effectiveAddress(i.word);
-                skipIncrement();
+                jump(i, (char value) -> {
+                    this.R3 = value++;
+                    return effectiveAddress(i);
+                });
                 break;
             case JZ:
-                // Jump if Zero
-                if (getValue(GeneralRegister.fromWord(i.word)) == 0) {
-                    this.PC = effectiveAddress(i.word);
-                    skipIncrement();
-                }
+                jump(i, (char value) -> {
+                    if (value == 0) {
+                        return effectiveAddress(i);
+                    } else {
+                        return PC++;
+                    }
+                });
                 break;
             case LDA:
-                // Load Register with Address
-                setValue(i.getGPR(), effectiveAddress(i.word));
+                load(i.getGPR(), effectiveAddress(i));
                 break;
             case LDR:
-                // Load Register from Memory
-                setValue(i.getGPR(), memory.read(effectiveAddress(i.word)));
+                load(i.getGPR(), memory.read(effectiveAddress(i)));
                 break;
             case LDX:
-                loadIndexFromMemory(i.getIXR(), effectiveAddress(i.word));
+                load(i.getIXR(), effectiveAddress(i));
                 break;
             case MLT:
                 break;
@@ -176,8 +175,7 @@ public class Processor {
             case RRC:
                 break;
             case SIR:
-                // Subtract Immediate from Register
-                setValue(i.getGPR(), (char value) -> {
+                arithmetic(i, (char value) -> {
                     if (i.getImmed() == 0)
                         return value;
 
@@ -188,16 +186,19 @@ public class Processor {
                 });
                 break;
             case SMR:
+                arithmetic(i, (char value) -> {
+                    return ALU.subtract(value, memory.read(effectiveAddress(i)));
+                });
                 break;
             case SOB:
                 break;
             case SRC:
                 break;
             case STR:
-                storeToMemory(i.getGPR(), effectiveAddress(i.word));
+                store(i.getGPR(), effectiveAddress(i));
                 break;
             case STX:
-                storeIndexToMemory(i.getIXR(), effectiveAddress(i.word));
+                store(i.getIXR(), effectiveAddress(i));
                 break;
             case TRP:
                 halt();
@@ -211,40 +212,18 @@ public class Processor {
     }
 
     /**
-     * Given a 16-bit word, return the effective address from the word.
+     * Given an instruction, return the effective address stored within the word.
      * 
-     * @param word The word to read from.
-     * @return The effective address from the word.
+     * @param i The instruction to to evaluate
+     * @return The effective address from the instruction
      */
-    public char effectiveAddress(char word) {
-        IndexRegister ix = IndexRegister.fromWord(word);
-
-        if (Opcode.isIndirectAddressing(word)) {
-            // Indirect addressing but NO indexing
-            LOGGER.fine("Computing effective address with indirect addressing");
-            switch (ix) {
-                case IX1:
-                    return memory.read((char) (X1 + WordUtils.getAddress(word)));
-                case IX2:
-                    return memory.read((char) (X2 + WordUtils.getAddress(word)));
-                case IX3:
-                    return memory.read((char) (X3 + WordUtils.getAddress(word)));
-                default:
-                    return memory.read((char) WordUtils.getAddress(word));
-            }
+    public char effectiveAddress(Instruction i) {
+        if (i.isIndirectAddressing()) {
+            LOGGER.fine("Evaluating effective address with indirect addressing");
+            return memory.read(ALU.add(getValue(i.getIXR()), i.getAddress()));
         } else {
-            // NO indirect addressing
-            LOGGER.fine("Computing effective address without indirect addressing");
-            switch (ix) {
-                case IX1:
-                    return (char) (X1 + WordUtils.getAddress(word));
-                case IX2:
-                    return (char) (X2 + WordUtils.getAddress(word));
-                case IX3:
-                    return (char) (X3 + WordUtils.getAddress(word));
-                default:
-                    return (char) WordUtils.getAddress(word);
-            }
+            LOGGER.fine("Evaluating effective address without indirect addressing");
+            return ALU.add(getValue(i.getIXR()), i.getAddress());
         }
     }
 
@@ -270,40 +249,61 @@ public class Processor {
     }
 
     /**
-     * Load the contents of the address into the specified general purpose register
+     * Loads the given value into the specified general purpose register.
      * 
-     * @param r       The register to load the value into
-     * @param address The address to load the value from
+     * @param r     The register to set the value of.
+     * @param value The value to set the register to.
      */
-    protected void loadFromMemory(GeneralRegister r, char address) {
-        LOGGER.info("Loading to register " + r + " from address " + String.format("0x%08X", (short) address));
-
+    protected void load(GeneralRegister r, char value) {
         switch (r) {
             case GPR0:
-                R0 = memory.read(address);
+                R0 = value;
                 break;
             case GPR1:
-                R1 = memory.read(address);
+                R1 = value;
                 break;
             case GPR2:
-                R2 = memory.read(address);
+                R2 = value;
                 break;
             case GPR3:
-                R3 = memory.read(address);
+                R3 = value;
+                break;
+            default:
+                LOGGER.severe("Invalid general purpose register " + r);
                 break;
         }
     }
 
     /**
-     * Store the contents of the specified general purpose register into the
-     * address.
+     * Loads the given value into the specified index register.
+     * 
+     * @param r     The register to set the value of.
+     * @param value The value to set the register to.
+     */
+    protected void load(IndexRegister r, char value) {
+        switch (r) {
+            case IX1:
+                X1 = value;
+                break;
+            case IX2:
+                X2 = value;
+                break;
+            case IX3:
+                X3 = value;
+                break;
+            default:
+                LOGGER.severe("Invalid index register " + r);
+                break;
+        }
+    }
+
+    /**
+     * Stores the value of the specified general purpose register into the address.
      * 
      * @param r       The register to store the value from.
      * @param address The address to store the value to.
      */
-    protected void storeToMemory(GeneralRegister r, char address) {
-        LOGGER.info("Storing value from register " + r + " to address " + String.format("0x%08X", (short) address));
-
+    protected void store(GeneralRegister r, char address) {
         switch (r) {
             case GPR0:
                 memory.write(address, R0);
@@ -317,44 +317,20 @@ public class Processor {
             case GPR3:
                 memory.write(address, R3);
                 break;
-        }
-    }
-
-    /**
-     * Load the contents of the address into the specified index register.
-     * 
-     * @param ix      The index register to load the value into.
-     * @param address The address to load the value from.
-     */
-    protected void loadIndexFromMemory(IndexRegister ix, char address) {
-        LOGGER.info("Loading to index register " + ix + " from address " + String.format("0x%08X", (short) address));
-
-        switch (ix) {
-            case IX1:
-                X1 = memory.read(address);
-                break;
-            case IX2:
-                X2 = memory.read(address);
-                break;
-            case IX3:
-                X3 = memory.read(address);
-                break;
             default:
+                LOGGER.severe("Invalid general purpose register " + r);
                 break;
         }
     }
 
     /**
-     * Store the contents of the specified index register into the address.
+     * Stores the value of the specified index register into the address.
      * 
-     * @param ix      The index register to store the value from.
+     * @param r       The register to store the value from.
      * @param address The address to store the value to.
      */
-    protected void storeIndexToMemory(IndexRegister ix, char address) {
-        LOGGER.info(
-                "Storing value from index register " + ix + " to address " + String.format("0x%08X", (short) address));
-
-        switch (ix) {
+    protected void store(IndexRegister r, char address) {
+        switch (r) {
             case IX1:
                 memory.write(address, X1);
                 break;
@@ -365,8 +341,47 @@ public class Processor {
                 memory.write(address, X3);
                 break;
             default:
+                LOGGER.severe("Invalid index register " + r);
                 break;
         }
+    }
+
+    /**
+     * Evaluates the given transfer function using the value of the supplied
+     * general purpose register. The return value of the transfer function is
+     * used as the address to jump to. A jump will not automatically increment the
+     * program counter, and must be done by the transfer function.
+     * 
+     * @param i The instruction to read from
+     * @param f The transfer function to use to compute the address
+     */
+    protected void jump(Instruction i, TransferFunction f) {
+        PC = f.evaluate(getValue(i.getGPR()));
+        skipIncrement();
+    }
+
+    /**
+     * Evaluates the given arithmetic function using the value stored in the RX and
+     * RY registers as specified by the instruction. The result of the arithmetic
+     * function is stored in the RX register.
+     * 
+     * @param i The instruction to read from
+     * @param f The arithmetic function to use to compute the result
+     */
+    protected void arithmetic(Instruction i, ArithmeticFunction f) {
+        load(i.getGPR(), f.evaluate(getValue(i.getGPR())));
+    }
+
+    /**
+     * Evaluates the given logic function using the value stored in RX and RY as
+     * specified by the instruction. The result of the logic function is stored in
+     * the RX register.
+     * 
+     * @param i The instruction to read from
+     * @param f The logic function to use to compute the result
+     */
+    protected void logic(Instruction i, LogicFunction f) {
+        load(i.getRX(), f.evaluate(getValue(i.getRX()), getValue(i.getRY())));
     }
 
     /**
@@ -391,34 +406,17 @@ public class Processor {
         }
     }
 
-    private void setValue(GeneralRegister r, ArithmeticFunction f) {
-        char value = f.evaluate(getValue(r));
-        setValue(r, value);
-    }
-
-    /**
-     * Sets the value of the specified general purpose register.
-     * 
-     * @param r     The register to set the value of.
-     * @param value The value to set the register to.
-     */
-    private void setValue(GeneralRegister r, char value) {
+    private char getValue(IndexRegister r) {
         switch (r) {
-            case GPR0:
-                R0 = value;
-                break;
-            case GPR1:
-                R1 = value;
-                break;
-            case GPR2:
-                R2 = value;
-                break;
-            case GPR3:
-                R3 = value;
-                break;
+            case IX1:
+                return X1;
+            case IX2:
+                return X2;
+            case IX3:
+                return X3;
             default:
                 LOGGER.severe("Invalid register " + r);
-                break;
+                return 0;
         }
     }
 
@@ -427,21 +425,17 @@ public class Processor {
      * execution of the current instruction.
      */
     private void skipIncrement() {
+        LOGGER.fine("Skipping increment of program counter this cycle");
         incrementPC = false;
     }
 
+    /**
+     * Notifies all listeners that the state of the processor has changed.
+     */
     private void notifyListeners() {
         for (HardwareListener listener : listeners) {
             listener.onUpdate();
         }
     }
 
-    private void logInstruction(char word) {
-        GeneralRegister r = GeneralRegister.fromWord(word);
-        IndexRegister ix = IndexRegister.fromWord(word);
-        char address = effectiveAddress(word);
-
-        LOGGER.info("Running instruction: " + Opcode.fromWord(word) + " " + r + " " + ix + " "
-                + String.format("0x%08X", (short) address));
-    }
 }

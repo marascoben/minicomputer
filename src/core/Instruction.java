@@ -1,11 +1,17 @@
 package core;
 
+import util.FormatUtils;
+
 public class Instruction {
 
-    public char word;
+    private char word;
 
     public Instruction(char word) {
         this.word = word;
+    }
+
+    public char getWord() {
+        return word;
     }
 
     /**
@@ -79,5 +85,17 @@ public class Instruction {
      */
     public GeneralRegister getRY() {
         return GeneralRegister.fromId((byte) ((word >> 6) & 0b11));
+    }
+
+    @Override
+    public String toString() {
+        return getOpcode() + "\n" +
+                "Address: " + FormatUtils.toHexString(getAddress()) + "\n" +
+                "Immed: " + FormatUtils.toHexString(getAddress()) + "\n" +
+                "GPR: " + getGPR() + "\n" +
+                "IXR: " + getIXR() + "\n" +
+                "Indirect: " + isIndirectAddressing() + "\n" +
+                "RX: " + getRX() + "\n" +
+                "RY: " + getRY();
     }
 }
