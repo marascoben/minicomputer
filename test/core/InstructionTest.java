@@ -21,6 +21,12 @@ public class InstructionTest {
     // GPR 3
     char GPR3 = 0b0000001100000000;
 
+    // Indirect set
+    char indirect = 0b0000000000100000;
+
+    // Indirect not set
+    char notIndirect = 0b0000000000000000;
+
     // Address 1
     char address1 = 0b0000000000000001;
 
@@ -64,5 +70,19 @@ public class InstructionTest {
         Instruction i = new Instruction(test1);
 
         assertEquals("LDR instruction should return correct opcode", Opcode.LDR, i.getOpcode());
+    }
+
+    @Test
+    public void isIndirect_ShouldReturnTrue(){
+        Instruction i = new Instruction(indirect);
+
+        assertEquals("Indirect bit should be set", true, i.isIndirectAddressing());
+    }    
+
+    @Test
+    public void isIndirect_ShouldReturnFalse(){
+        Instruction i = new Instruction(notIndirect);
+
+        assertEquals("Indirect bit should not be set", false, i.isIndirectAddressing());
     }
 }

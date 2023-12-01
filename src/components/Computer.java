@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import components.cpu.Processor;
+import components.io.IOBus;
 
 public class Computer {
 
@@ -14,6 +15,9 @@ public class Computer {
 
     // The memory object of the minicomputer
     public Memory memory;
+
+    // The IO bus of the minicomputer
+    public IOBus ioBus;
 
     // The initial program loader ROM
     public ROM ipl;
@@ -26,7 +30,8 @@ public class Computer {
      */
     public Computer() {
         memory = new Memory();
-        processor = new Processor(memory);
+        ioBus = new IOBus();
+        processor = new Processor(memory, ioBus);
         roms = new java.util.ArrayList<ROM>();
     }
 
@@ -61,9 +66,11 @@ public class Computer {
      * clears the ROMs and loads the initial program loader ROM.
      */
     public void reset() {
-        memory = new Memory();
-        processor = new Processor(memory);
+        ioBus.reset();
         roms.clear();
+
+        memory = new Memory();
+        processor = new Processor(memory, ioBus);
 
         LOGGER.info("Reset the minicomputer");
     }

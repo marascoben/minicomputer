@@ -5,15 +5,20 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import components.Memory;
+import components.io.IOBus;
+import core.Condition;
+import core.Fault;
 import core.GeneralRegister;
 import core.IndexRegister;
 import core.Instruction;
 import core.func.ArithmeticFunction;
+import core.func.IOFunction;
 import core.func.LoadFunction;
 import core.func.LogicFunction;
 import core.func.StoreFunction;
 import core.func.TransferFunction;
 import ui.listeners.HardwareListener;
+import util.FormatUtils;
 
 public class Processor {
 
@@ -34,7 +39,7 @@ public class Processor {
     // Instruction Register
     private char IR = 0;
 
-    // Memory Fault Register
+    // Machine Fault Register
     private byte MFR = 0;
 
     // Condition Code
@@ -42,6 +47,9 @@ public class Processor {
 
     // Memory Object
     private Memory memory;
+
+    // IO Bus
+    private IOBus ioBus;
 
     // Whether or not the minicomputer is halted
     private boolean halted = false;
@@ -52,8 +60,9 @@ public class Processor {
     // List of listeners
     private List<HardwareListener> listeners = new ArrayList<>();
 
-    public Processor(Memory memory) {
+    public Processor(Memory memory, IOBus ioBus) {
         this.memory = memory;
+        this.ioBus = ioBus;
     }
 
     /**
@@ -98,7 +107,7 @@ public class Processor {
      * @param i The instruction to execute.
      */
     public void execute(Instruction i) {
-        LOGGER.info("Executing instruction: " + i.toString());
+        LOGGER.info("Executing instruction " + i.toString() + " at PC " + FormatUtils.toHexString(PC));
 
         switch (i.getOpcode()) {
             case AIR:
@@ -118,17 +127,40 @@ public class Processor {
                 });
                 break;
             case AND:
+                logic(i, (char rx, char ry) -> {
+                    return (char) (rx & ry);
+                });
                 break;
             case CHK:
                 break;
             case DVD:
+                arithmetic(i, (char rx, char ry) -> {
+                    if (ry == 0) {
+                        CC = Condition.set(Condition.DIVZERO, CC);
+                        return 0;
+                    }
+
+                    return rx;
+                });
                 break;
             case HLT:
                 halt();
                 break;
             case IN:
+                io(i, (char value) -> {
+                    return ioBus.read((short) i.getImmed());
+                });
                 break;
             case JCC:
+                jump(i, (char value) -> {
+                    Fault check = Fault.fromId(i.getGPR().id);
+
+                    if (Fault.isSet(check, MFR)) {
+                        return effectiveAddress(i);
+                    } else {
+                        return PC++;
+                    }
+                });
                 break;
             case JGE:
                 jump(i, (char value) -> {
@@ -176,12 +208,25 @@ public class Processor {
                 load(effectiveAddress(i), (char value) -> load(i.getIXR(), value));
                 break;
             case MLT:
+                arithmetic(i, (char rx, char ry) -> {
+                    return rx;
+                });
                 break;
             case NOT:
+                logic(i, (char rx, char ry) -> {
+                    return (char) ~rx;
+                });
                 break;
             case ORR:
+                logic(i, (char rx, char ry) -> {
+                    return (char) (rx | ry);
+                });
                 break;
             case OUT:
+                io(i, (char value) -> {
+                    ioBus.write((short) i.getImmed(), value);
+                    return value;
+                });
                 break;
             case RFS:
                 jump(i, (char value) -> {
@@ -229,6 +274,15 @@ public class Processor {
                 halt();
                 break;
             case TRR:
+                logic(i, (char rx, char ry) -> {
+                    if (rx == ry) {
+                        CC = 1;
+                    } else {
+                        CC = 0;
+                    }
+
+                    return rx;
+                });
                 break;
             default:
                 LOGGER.severe("An invalid opcode was encountered: " + i.getOpcode());
@@ -379,6 +433,18 @@ public class Processor {
     }
 
     /**
+     * Evaluates the given arithmetic function using the value stored in the RX and
+     * RY registers as specified by the instruction. The result of the arithmetic
+     * function is stored in the RX register.
+     * 
+     * @param i The instruction to read from
+     * @param f The arithmetic function to use to compute the result
+     */
+    protected void arithmetic(Instruction i, LogicFunction f) {
+        load(i.getGPR(), f.evaluate(getValue(i.getGPR()), getValue(i.getGPR())));
+    }
+
+    /**
      * Evaluates the given logic function using the value stored in RX and RY as
      * specified by the instruction. The result of the logic function is stored in
      * the RX register.
@@ -388,6 +454,10 @@ public class Processor {
      */
     protected void logic(Instruction i, LogicFunction f) {
         load(i.getRX(), f.evaluate(getValue(i.getRX()), getValue(i.getRY())));
+    }
+
+    protected void io(Instruction i, IOFunction f) {
+
     }
 
     /**

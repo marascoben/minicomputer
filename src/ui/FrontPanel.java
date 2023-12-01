@@ -49,6 +49,8 @@ public class FrontPanel extends JFrame {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileFilter(new FileNameExtensionFilter("ROM (.txt)", Config.ROM_FILE_EXTENSION));
 
+        registerListeners();
+
         // Setup the load button action listener
         controlPanel.loadButton.addActionListener(e -> {
             int returnVal = fileChooser.showOpenDialog(this);
@@ -58,18 +60,10 @@ public class FrontPanel extends JFrame {
             }
         });
 
-        /*
-         * Setup all of the action and event listeners for the front panel
-         */
-
-        computer.processor.addListener(() -> {
-            updateIndicators();
-            updateTextInputs();
-        });
-
         // Setup the intialize button action listener
         controlPanel.initButton.addActionListener(e -> {
             computer.reset();
+            registerListeners();
         });
 
         // Setup the Single Step button action listener
@@ -122,6 +116,17 @@ public class FrontPanel extends JFrame {
         setSize((int) (width * Config.UI_SCALE_WIDTH), (int) (height * Config.UI_SCALE_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+    }
+
+    /**
+     * Registers all of the listeners for the front panel. Will be called after
+     * startup and any reset operation.
+     */
+    public void registerListeners() {
+        computer.processor.addListener(() -> {
+            updateIndicators();
+            updateTextInputs();
+        });
     }
 
     public void updateIndicators() {

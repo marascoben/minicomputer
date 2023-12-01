@@ -83,7 +83,7 @@ public enum Fault {
     }
 
     /**
-     * Clears the fault from the condition code and returns the new condition code
+     * Clears the fault from the and returns the new condition code
      * 
      * @param fault The fault to clear
      * @param cc    The condition code to clear the fault from
