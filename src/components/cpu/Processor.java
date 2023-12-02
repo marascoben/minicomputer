@@ -83,6 +83,8 @@ public class Processor {
         while (!halted) {
             step();
         }
+
+        LOGGER.info("Run has completed");
     }
 
     /**

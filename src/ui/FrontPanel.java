@@ -1,8 +1,6 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
@@ -11,16 +9,20 @@ import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import components.Computer;
 import components.ROM;
 import config.Config;
+import ui.components.FrontPanelMenu;
 import ui.panels.ControlPanel;
 import ui.panels.IndicatorPanel;
 import ui.panels.InputPanel;
+import ui.windows.ConsoleWindow;
 import util.FormatUtils;
+import util.ScreenUtil;
 
 public class FrontPanel extends JFrame {
 
@@ -34,6 +36,11 @@ public class FrontPanel extends JFrame {
 
     // Panel containing all text inputs for settable registers
     public InputPanel inputPanel = new InputPanel();
+
+    // Menu bar for the front panel
+    public FrontPanelMenu menu = new FrontPanelMenu();
+
+    public ConsoleWindow consoleWindow = new ConsoleWindow();
 
     private final JFileChooser fileChooser = new JFileChooser();
 
@@ -50,31 +57,8 @@ public class FrontPanel extends JFrame {
         fileChooser.setFileFilter(new FileNameExtensionFilter("ROM (.txt)", Config.ROM_FILE_EXTENSION));
 
         registerListeners();
-
-        // Setup the load button action listener
-        controlPanel.loadButton.addActionListener(e -> {
-            int returnVal = fileChooser.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                ROM rom = new ROM(fileChooser.getSelectedFile());
-                computer.loadROM(rom);
-            }
-        });
-
-        // Setup the intialize button action listener
-        controlPanel.initButton.addActionListener(e -> {
-            computer.reset();
-            registerListeners();
-        });
-
-        // Setup the Single Step button action listener
-        controlPanel.stepButton.addActionListener(e -> {
-            computer.step();
-        });
-
-        // Setup the Run button action listener
-        controlPanel.runButton.addActionListener(e -> {
-            computer.run();
-        });
+        registerActionListeners();
+        registerKeyListeners();
 
         // Update the program counter when the user changes the value in the text box
         inputPanel.miscRegisterPanel.pc.addKeyListener(new KeyAdapter() {
@@ -89,10 +73,6 @@ public class FrontPanel extends JFrame {
                 }
             }
         });
-
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        int width = gd.getDisplayMode().getWidth();
-        int height = gd.getDisplayMode().getHeight();
 
         JPanel stackPanel = new JPanel();
         stackPanel.setOpaque(false);
@@ -110,10 +90,11 @@ public class FrontPanel extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         stackPanel.add(inputPanel, gbc);
 
+        add(menu, BorderLayout.NORTH);
         add(indicatorPanel, BorderLayout.CENTER);
         add(stackPanel, BorderLayout.SOUTH);
 
-        setSize((int) (width * Config.UI_SCALE_WIDTH), (int) (height * Config.UI_SCALE_HEIGHT));
+        setSize(ScreenUtil.getScaledSize(Config.UI_SCALE_WIDTH, Config.UI_SCALE_HEIGHT));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
@@ -127,6 +108,52 @@ public class FrontPanel extends JFrame {
             updateIndicators();
             updateTextInputs();
         });
+    }
+
+    /**
+     * Registers all action listeners for the front panel. Will be called once at
+     * startup.
+     */
+    public void registerActionListeners() {
+
+        // Configure load ROM from menu bar button
+        menu.fileLoadROM.addActionListener(e -> {
+            int returnVal = fileChooser.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                ROM rom = new ROM(fileChooser.getSelectedFile());
+                computer.loadROM(rom);
+                JOptionPane.showMessageDialog(this, "ROM loaded successfully!", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        menu.actionReset.addActionListener(e -> {
+            computer.reset();
+            registerListeners();
+            JOptionPane.showMessageDialog(this, "Minicomputer reset successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        // Launch the console window
+        menu.viewConsole.addActionListener(e -> {
+            consoleWindow.setVisible(true);
+        });
+
+        controlPanel.stepForwardButton.addActionListener(e -> {
+            computer.step();
+        });
+
+        controlPanel.runButton.addActionListener(e -> {
+            computer.run();
+        });
+    }
+
+    /**
+     * Registers all key listeners for the front panel. Will be called once at
+     * startup.
+     */
+    public void registerKeyListeners() {
+
     }
 
     public void updateIndicators() {

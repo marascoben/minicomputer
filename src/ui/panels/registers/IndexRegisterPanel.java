@@ -21,13 +21,13 @@ public class IndexRegisterPanel extends GroupPanel {
         setLayout(new GridBagLayout());
 
         JLabel x1Label = new JLabel("X1: ");
-        x1 = new JTextField("0000000000000000");
+        x1 = new JTextField("0000");
 
         JLabel x2Label = new JLabel("X2: ");
-        x2 = new JTextField("0000000000000000");
+        x2 = new JTextField("0000");
 
         JLabel x3Label = new JLabel("X3: ");
-        x3 = new JTextField("0000000000000000");
+        x3 = new JTextField("0000");
 
         GridBagConstraints gbc = new GridBagConstraints();
 

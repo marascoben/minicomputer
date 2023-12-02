@@ -25,16 +25,16 @@ public class GeneralRegisterPanel extends GroupPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel r0Label = new JLabel("R0: ");
-        r0 = new JTextField("0000000000000000");
+        r0 = new JTextField("0000");
 
         JLabel r1Label = new JLabel("R1: ");
-        r1 = new JTextField("0000000000000000");
+        r1 = new JTextField("0000");
 
         JLabel r2Label = new JLabel("R2: ");
-        r2 = new JTextField("0000000000000000");
+        r2 = new JTextField("0000");
 
         JLabel r3Label = new JLabel("R3: ");
-        r3 = new JTextField("0000000000000000");
+        r3 = new JTextField("0000");
 
         gbc.gridx = 0;
         gbc.gridy = 0;

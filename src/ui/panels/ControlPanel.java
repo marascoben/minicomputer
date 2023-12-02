@@ -10,11 +10,9 @@ public class ControlPanel extends GroupPanel {
 
     public JButton runButton;
 
-    public JButton stepButton;
+    public JButton stepBackButton;
 
-    public JButton initButton;
-
-    public JButton loadButton;
+    public JButton stepForwardButton;
 
     public ControlPanel() {
         super();
@@ -24,26 +22,21 @@ public class ControlPanel extends GroupPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
+        stepBackButton = new JButton("<<");
         runButton = new JButton("Run");
-        stepButton = new JButton("SS");
-        initButton = new JButton("Init");
-        loadButton = new JButton("Load");
+        stepForwardButton = new JButton(">>");
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(initButton, gbc);
-        
         gbc.gridx = 1;
         gbc.gridy = 0;
-        add(loadButton, gbc);
+        add(stepBackButton, gbc);
 
         gbc.gridx = 2;
         gbc.gridy = 0;
-        add(stepButton, gbc);
+        add(runButton, gbc);
 
         gbc.gridx = 3;
         gbc.gridy = 0;
-        add(runButton, gbc);
+        add(stepForwardButton, gbc);
 
     }
 }

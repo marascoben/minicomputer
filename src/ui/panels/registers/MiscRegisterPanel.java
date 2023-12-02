@@ -21,13 +21,13 @@ public class MiscRegisterPanel extends GroupPanel {
         setLayout(new GridBagLayout());
 
         JLabel pcLabel = new JLabel("PC: ");
-        pc = new JTextField("0000000000000000");
+        pc = new JTextField("0000");
 
         JLabel marLabel = new JLabel("MAR: ");
-        mar = new JTextField("000000000000");
+        mar = new JTextField("0000");
 
         JLabel mbrLabel = new JLabel("MBR: ");
-        mbr = new JTextField("0000000000000000");
+        mbr = new JTextField("0000");
 
         GridBagConstraints gbc = new GridBagConstraints();
 
