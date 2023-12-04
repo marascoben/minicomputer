@@ -20,6 +20,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // Set application name and menu bar for macOS
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("apple.awt.application.name", "Minicomputer");
 
         String LOG_FILE = "minicomputer-" + System.currentTimeMillis() + "." + Config.LOG_FILE_EXTENSION;

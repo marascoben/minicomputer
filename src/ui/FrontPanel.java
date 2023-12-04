@@ -77,7 +77,7 @@ public class FrontPanel extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         stackPanel.add(inputPanel, gbc);
 
-        add(menu, BorderLayout.NORTH);
+        setJMenuBar(menu);
         add(indicatorPanel, BorderLayout.CENTER);
         add(stackPanel, BorderLayout.SOUTH);
 
