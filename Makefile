@@ -38,9 +38,9 @@ SOURCES = src/components/Computer.java \
 		  src/ui/panels/registers/MiscRegisterPanel.java \
 		  src/ui/panels/ControlPanel.java \
 		  src/ui/panels/IndicatorPanel.java \
-		  src/ui/panels/RegisterPanel.java \
-		  src/ui/peripherals/Console.java \
-		  src/ui/peripherals/Keyboard.java \
+		  src/ui/panels/InputPanel.java \
+		  src/ui/peripheral/Console.java \
+		  src/ui/peripheral/Keyboard.java \
 		  src/ui/windows/ConsoleWindow.java \
 		  src/ui/Colors.java \
 		  src/ui/FrontPanel.java \
