@@ -37,9 +37,7 @@ public class FrontPanelMenu extends JMenuBar {
 
         viewMenu = new JMenu("View");
         viewConsole = new JMenuItem("Console");
-        viewMemory = new JMenuItem("Memory");
         viewMenu.add(viewConsole);
-        viewMenu.add(viewMemory);
 
         add(fileMenu);
         add(actionMenu);

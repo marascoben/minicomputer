@@ -21,7 +21,7 @@ public class IOBus {
      */
     public void addDevice(Device device) {
         devices.put(device.getId(), device);
-        LOGGER.fine("Added device " + device.getClass().getName() + " with ID " + device.getId());
+        LOGGER.info("Added device " + device.getClass().getName() + " with ID " + device.getId());
     }
 
     /**

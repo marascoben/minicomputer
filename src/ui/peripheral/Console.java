@@ -2,18 +2,20 @@ package ui.peripheral;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import components.io.Device;
-import ui.components.GroupPanel;
 
-public class Console extends GroupPanel implements Device {
+public class Console extends JPanel implements Device {
 
     public JTextArea textArea = new JTextArea();
 
     public Console() {
         super();
         setLayout(new BorderLayout());
+
+        textArea.setEditable(false);
 
         add(textArea, BorderLayout.CENTER);
     }

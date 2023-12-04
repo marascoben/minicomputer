@@ -2,10 +2,6 @@ package ui.panels.registers;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 import ui.components.GroupPanel;
 import ui.components.RegisterTextField;
 

@@ -46,6 +46,10 @@ public class FrontPanel extends JFrame {
     public FrontPanel(Computer computer) {
         super("Minicomputer");
 
+        // Add the console and keyboard to the IO bus
+        computer.ioBus.addDevice(consoleWindow.console);
+        computer.ioBus.addDevice(consoleWindow.keyboard);
+
         this.computer = computer;
 
         // Setup the file chooser for loading ROMs

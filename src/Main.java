@@ -62,6 +62,7 @@ public class Main {
             try {
                 Desktop.getDesktop().open(new File(LOG_FILE));
             } catch (IOException e1) {
+                LOGGER.severe("Failed to open log file: " + e1.getMessage());
                 JOptionPane.showMessageDialog(null,
                         "Failed to open log file",
                         "Error",
