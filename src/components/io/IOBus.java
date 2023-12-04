@@ -58,6 +58,17 @@ public class IOBus {
         device.write(data);
     }
 
+    public char check(short id){
+        Device device = devices.get(id);
+
+        if (device == null) {
+            LOGGER.warning("Failed to check device with ID " + id + " as the device does not exist");
+            return 0;
+        }
+
+        return device.check();
+    }
+
     /**
      * Tells all devices connected to the IOBus to perform a reset
      * operation.

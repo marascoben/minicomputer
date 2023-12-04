@@ -22,7 +22,7 @@ public interface Device {
      * 
      * @return True if the device is ready to be read from, false otherwise.
      */
-    public boolean check();
+    public char check();
 
     /**
      * Gets the ID of the device.

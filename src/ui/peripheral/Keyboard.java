@@ -34,8 +34,8 @@ public class Keyboard extends JTextField implements Device {
     }
 
     @Override
-    public boolean check() {
-        return !buffer.isEmpty();
+    public char check() {
+        return (char) buffer.size();
     }
 
     @Override

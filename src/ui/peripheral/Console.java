@@ -31,8 +31,8 @@ public class Console extends JPanel implements Device {
     }
 
     @Override
-    public boolean check() {
-        return true;
+    public char check() {
+        return 0;
     }
 
     @Override

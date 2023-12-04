@@ -134,6 +134,9 @@ public class Processor {
                 });
                 break;
             case CHK:
+                io(i, (char value) -> {
+                    return ioBus.check((short) i.getImmed());
+                });
                 break;
             case DVD:
                 arithmetic(i, (char rx, char ry) -> {
@@ -458,8 +461,15 @@ public class Processor {
         load(i.getRX(), f.evaluate(getValue(i.getRX()), getValue(i.getRY())));
     }
 
+    /**
+     * Evaluates the given IO function using the value stored in the specified
+     * general purpose register.
+     * 
+     * @param i The instruction to read from
+     * @param f The IO function to use to compute the result
+     */
     protected void io(Instruction i, IOFunction f) {
-
+        load(i.getGPR(), f.evaluate(getValue(i.getGPR())));
     }
 
     /**
