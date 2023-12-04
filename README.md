@@ -1,6 +1,8 @@
-# simple-cisc
+# minicomputer
 
-A simple Complex Instruction Set Computer (CISC) simulator developed for the CSCI6461 Computer Architecture course at the George Washington University. 
+> This project was developed for the CSCI6461 Computer Architecture course during my masters studies at the George Washington University.
+
+A Complex Instruction Set (CISC) computer simulator.
 
 ## Build and Run
 
