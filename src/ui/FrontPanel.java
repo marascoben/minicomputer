@@ -3,8 +3,6 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -21,7 +19,6 @@ import ui.panels.ControlPanel;
 import ui.panels.IndicatorPanel;
 import ui.panels.InputPanel;
 import ui.windows.ConsoleWindow;
-import util.FormatUtils;
 import util.ScreenUtil;
 
 public class FrontPanel extends JFrame {
@@ -59,20 +56,6 @@ public class FrontPanel extends JFrame {
         registerListeners();
         registerActionListeners();
         registerKeyListeners();
-
-        // Update the program counter when the user changes the value in the text box
-        inputPanel.miscRegisterPanel.pc.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent evt) {
-                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                    try {
-                        computer.processor.PC = (char) Integer.parseInt(inputPanel.miscRegisterPanel.pc.getText(), 16);
-                        updateIndicators();
-                    } catch (NumberFormatException e) {
-                        LOGGER.warning("Failed to parse PC value: " + e.getMessage());
-                    }
-                }
-            }
-        });
 
         JPanel stackPanel = new JPanel();
         stackPanel.setOpaque(false);
@@ -153,7 +136,55 @@ public class FrontPanel extends JFrame {
      * startup.
      */
     public void registerKeyListeners() {
+        inputPanel.miscRegisterPanel.pc.textField.addActionListener(e -> {
+            computer.processor.PC = inputPanel.miscRegisterPanel.pc.get();
+            updateIndicators();
+        });
 
+        inputPanel.miscRegisterPanel.mar.textField.addActionListener(e -> {
+            computer.processor.MAR = inputPanel.miscRegisterPanel.mar.get();
+            updateIndicators();
+        });
+
+        inputPanel.miscRegisterPanel.mbr.textField.addActionListener(e -> {
+            computer.processor.MBR = inputPanel.miscRegisterPanel.mbr.get();
+            updateIndicators();
+        });
+
+        inputPanel.generalRegisterPanel.r0.textField.addActionListener(e -> {
+            computer.processor.R0 = inputPanel.generalRegisterPanel.r0.get();
+            updateIndicators();
+        });
+
+        inputPanel.generalRegisterPanel.r1.textField.addActionListener(e -> {
+            computer.processor.R1 = inputPanel.generalRegisterPanel.r1.get();
+            updateIndicators();
+        });
+
+        inputPanel.generalRegisterPanel.r2.textField.addActionListener(e -> {
+            computer.processor.R2 = inputPanel.generalRegisterPanel.r2.get();
+            updateIndicators();
+        });
+
+        inputPanel.generalRegisterPanel.r3.textField.addActionListener(e -> {
+            computer.processor.R3 = inputPanel.generalRegisterPanel.r3.get();
+            updateIndicators();
+        });
+
+        inputPanel.indexRegisterPanel.x1.textField.addActionListener(e -> {
+            computer.processor.X1 = inputPanel.indexRegisterPanel.x1.get();
+            updateIndicators();
+        });
+
+        inputPanel.indexRegisterPanel.x2.textField.addActionListener(e -> {
+            computer.processor.X2 = inputPanel.indexRegisterPanel.x2.get();
+            updateIndicators();
+        });
+
+        inputPanel.indexRegisterPanel.x3.textField.addActionListener(e -> {
+            computer.processor.X3 = inputPanel.indexRegisterPanel.x3.get();
+            updateIndicators();
+        });
     }
 
     public void updateIndicators() {
@@ -174,15 +205,20 @@ public class FrontPanel extends JFrame {
 
     public void updateTextInputs() {
         // Update misc regsiter group text inputs
-        inputPanel.miscRegisterPanel.pc.setText(FormatUtils.toHexString(computer.processor.PC));
-        inputPanel.miscRegisterPanel.mar.setText(FormatUtils.toBinaryString(computer.processor.MAR, 12));
-        inputPanel.miscRegisterPanel.mbr.setText(FormatUtils.toBinaryString(computer.processor.MBR, 16));
+        inputPanel.miscRegisterPanel.pc.set(computer.processor.PC);
+        inputPanel.miscRegisterPanel.mar.set(computer.processor.MAR);
+        inputPanel.miscRegisterPanel.mbr.set(computer.processor.MBR);
 
         // Update general purpose register text inputs
-        inputPanel.generalRegisterPanel.r0.setText(FormatUtils.toBinaryString(computer.processor.R0, 16));
-        inputPanel.generalRegisterPanel.r1.setText(FormatUtils.toBinaryString(computer.processor.R1, 16));
-        inputPanel.generalRegisterPanel.r2.setText(FormatUtils.toBinaryString(computer.processor.R2, 16));
-        inputPanel.generalRegisterPanel.r3.setText(FormatUtils.toBinaryString(computer.processor.R3, 16));
+        inputPanel.generalRegisterPanel.r0.set(computer.processor.R0);
+        inputPanel.generalRegisterPanel.r1.set(computer.processor.R1);
+        inputPanel.generalRegisterPanel.r2.set(computer.processor.R2);
+        inputPanel.generalRegisterPanel.r3.set(computer.processor.R3);
+
+        // Update index register text inputs
+        inputPanel.indexRegisterPanel.x1.set(computer.processor.X1);
+        inputPanel.indexRegisterPanel.x2.set(computer.processor.X2);
+        inputPanel.indexRegisterPanel.x3.set(computer.processor.X3);
     }
 
 }

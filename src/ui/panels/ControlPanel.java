@@ -22,13 +22,8 @@ public class ControlPanel extends GroupPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        stepBackButton = new JButton("<<");
         runButton = new JButton("Run");
         stepForwardButton = new JButton(">>");
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        add(stepBackButton, gbc);
 
         gbc.gridx = 2;
         gbc.gridy = 0;

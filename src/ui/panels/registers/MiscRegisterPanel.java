@@ -7,51 +7,37 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import ui.components.GroupPanel;
+import ui.components.RegisterTextField;
 
 public class MiscRegisterPanel extends GroupPanel {
 
-    public JTextField pc;
+    public RegisterTextField pc;
 
-    public JTextField mar;
+    public RegisterTextField mar;
 
-    public JTextField mbr;
+    public RegisterTextField mbr;
 
     public MiscRegisterPanel() {
         super();
         setLayout(new GridBagLayout());
 
-        JLabel pcLabel = new JLabel("PC: ");
-        pc = new JTextField("0000");
+        pc = new RegisterTextField("PC: ");
 
-        JLabel marLabel = new JLabel("MAR: ");
-        mar = new JTextField("0000");
+        mar = new RegisterTextField("MAR: ");
 
-        JLabel mbrLabel = new JLabel("MBR: ");
-        mbr = new JTextField("0000");
+        mbr = new RegisterTextField("MBR: ");
 
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        add(pcLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
         add(pc, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        add(marLabel, gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 1;
         add(mar, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        add(mbrLabel, gbc);
-
-        gbc.gridx = 1;
         gbc.gridy = 2;
         add(mbr, gbc);
     }
