@@ -4,6 +4,8 @@
 
 A Complex Instruction Set (CISC) computer simulator.
 
+![Minicomputer front panel image](/doc/front-panel.png)
+
 ## Build and Run
 
 This simulator has been built using version `65` of the Java Runtime, and may not work with older versions.
